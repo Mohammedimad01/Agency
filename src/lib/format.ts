@@ -48,3 +48,8 @@ export function formatPercent(value: number, digits = 0) {
 export function todayISO() {
   return format(new Date(), "yyyy-MM-dd");
 }
+
+/** ISO date (yyyy-MM-dd) n days from today (server-side helper, keeps render functions pure). */
+export function isoDaysFromNow(days: number) {
+  return format(new Date(Date.now() + days * 86_400_000), "yyyy-MM-dd");
+}

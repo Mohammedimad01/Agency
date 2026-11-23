@@ -44,6 +44,8 @@ export default async function ProjectWorkspace({ params, searchParams }: { param
 
   const canManage = ctx.can("projects.manage") || project.project_manager_id === ctx.userId;
   const showMoney = ctx.can("finance.view");
+  const canSeeBudget = showMoney || ctx.can("projects.manage");
+  const { data: money } = canSeeBudget ? await sb.from("project_finances").select("budget_cents, contract_value_cents").eq("project_id", id).maybeSingle() : { data: null };
   const [currency, team, templates, milestones, tasks, deliverables, revisions, files, time, activity, conversations, clients, services, finance] = await Promise.all([
     getCurrency(ctx.organizationId),
     getTeamDirectory(ctx.organizationId),
@@ -133,10 +135,10 @@ export default async function ProjectWorkspace({ params, searchParams }: { param
                   services={services.map((s) => ({ id: s.id, name: s.name }))}
                   templates={templates}
                   team={teamOptions}
-                  canSeeMoney={showMoney || ctx.can("projects.manage")}
+                  canSeeMoney={canSeeBudget}
                   project={{
                     id: project.id, name: project.name, client_id: project.client_id, service_id: project.service_id ?? "", description: project.description ?? "",
-                    scope: project.scope ?? "", budget: minorToInput(project.budget_cents, currency), contract_value: minorToInput(project.contract_value_cents, currency),
+                    scope: project.scope ?? "", budget: minorToInput(money?.budget_cents, currency), contract_value: minorToInput(money?.contract_value_cents, currency),
                     start_date: project.start_date ?? "", due_date: project.due_date ?? "", priority: project.priority, status: project.status,
                     project_manager_id: project.project_manager_id ?? "", internal_notes: project.internal_notes ?? "", progress_mode: project.progress_mode as "milestones",
                     progress: project.progress,
@@ -248,8 +250,8 @@ export default async function ProjectWorkspace({ params, searchParams }: { param
                   <CardTitle>Financials</CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-2 text-[13px]">
-                  <Row label="Budget" value={project.budget_cents ? formatMoney(project.budget_cents, currency) : "—"} />
-                  <Row label="Contract value" value={project.contract_value_cents ? formatMoney(project.contract_value_cents, currency) : "—"} />
+                  <Row label="Budget" value={money?.budget_cents ? formatMoney(money.budget_cents, currency) : "—"} />
+                  <Row label="Contract value" value={money?.contract_value_cents ? formatMoney(money.contract_value_cents, currency) : "—"} />
                   <Row label="Invoiced" value={formatMoney(fin?.invoiced_cents ?? 0, currency)} />
                   <Row label="Collected" value={formatMoney(fin?.collected_cents ?? 0, currency)} />
                   <Row label="Expenses" value={formatMoney(fin?.expenses_cents ?? 0, currency)} />

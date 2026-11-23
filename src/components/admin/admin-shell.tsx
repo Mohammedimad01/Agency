@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Menu } from "lucide-react";
 import type { AdminNavItem } from "@/config/admin-nav";
 import { AdminSidebar, SidebarNav } from "./sidebar";
@@ -10,6 +10,29 @@ import { ThemeToggle } from "@/components/shared/theme";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared/logo";
+
+/** Persisted sidebar preference (per browser). */
+const KEY = "admin.sidebar.collapsed";
+const listeners = new Set<() => void>();
+const sidebarStore = {
+  get: () => {
+    try {
+      return localStorage.getItem(KEY) === "1";
+    } catch {
+      return false;
+    }
+  },
+  set: (v: boolean) => {
+    try {
+      localStorage.setItem(KEY, v ? "1" : "0");
+    } catch {}
+    listeners.forEach((l) => l());
+  },
+  subscribe: (l: () => void) => {
+    listeners.add(l);
+    return () => listeners.delete(l);
+  },
+};
 
 export function AdminShell({
   groups,
@@ -24,20 +47,9 @@ export function AdminShell({
   badges?: Record<string, number>;
   children: React.ReactNode;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const collapsed = useSyncExternalStore(sidebarStore.subscribe, sidebarStore.get, () => false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  useEffect(() => {
-    try {
-      setCollapsed(localStorage.getItem("admin.sidebar.collapsed") === "1");
-    } catch {}
-  }, []);
-  const toggle = () =>
-    setCollapsed((v) => {
-      try {
-        localStorage.setItem("admin.sidebar.collapsed", v ? "0" : "1");
-      } catch {}
-      return !v;
-    });
+  const toggle = () => sidebarStore.set(!collapsed);
 
   return (
     <div className="flex min-h-dvh bg-background">

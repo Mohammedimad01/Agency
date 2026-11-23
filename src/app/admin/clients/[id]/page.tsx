@@ -35,7 +35,7 @@ export default async function ClientDetailPage({ params, searchParams }: { param
     getCurrency(ctx.organizationId),
     getTeamDirectory(ctx.organizationId),
     sb.from("client_contacts").select("*").eq("client_id", id).is("deleted_at", null).order("is_primary", { ascending: false }),
-    sb.from("projects").select("id, code, name, status, progress, due_date, contract_value_cents").eq("client_id", id).is("deleted_at", null).order("created_at", { ascending: false }),
+    sb.from("projects").select("id, code, name, status, progress, due_date, finance:project_finances(contract_value_cents)").eq("client_id", id).is("deleted_at", null).order("created_at", { ascending: false }),
     showFinance ? sb.from("invoices").select("id, number, status, total_cents, balance_cents, due_date, issue_date").eq("client_id", id).is("deleted_at", null).order("issue_date", { ascending: false }) : Promise.resolve({ data: [] as never[] }),
     showFinance ? sb.from("payments").select("id, amount_cents, payment_date, method, status, reference, invoices(number)").eq("client_id", id).order("payment_date", { ascending: false }) : Promise.resolve({ data: [] as never[] }),
     ctx.can("contracts.view") ? sb.from("contracts").select("id, title, status, value_cents, end_date").eq("client_id", id).is("deleted_at", null) : Promise.resolve({ data: [] as never[] }),
@@ -238,7 +238,7 @@ export default async function ClientDetailPage({ params, searchParams }: { param
                     <TableCell><StatusBadge status={p.status} map={PROJECT_STATUSES} /></TableCell>
                     <TableCell className="tabular">{p.progress}%</TableCell>
                     <TableCell>{formatDate(p.due_date)}</TableCell>
-                    {showFinance ? <TableCell className="text-right tabular">{p.contract_value_cents ? formatMoney(p.contract_value_cents, currency) : "—"}</TableCell> : null}
+                    {showFinance ? <TableCell className="text-right tabular">{p.finance?.contract_value_cents ? formatMoney(p.finance.contract_value_cents, currency) : "—"}</TableCell> : null}
                   </TableRow>
                 ))}
               </TableBody>

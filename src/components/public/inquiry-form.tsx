@@ -89,7 +89,7 @@ export function InquiryForm({
       {/* Honeypot */}
       <div aria-hidden className="absolute -left-[9999px] h-0 overflow-hidden">
         <label>
-          Company URL
+          Leave this field empty
           <input tabIndex={-1} autoComplete="off" {...register("company_url")} />
         </label>
       </div>

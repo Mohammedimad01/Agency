@@ -11,7 +11,7 @@ import { FormDialog } from "@/components/shared/form-dialog";
 import { ContractForm } from "@/features/contracts/components/contract-forms";
 import { getCurrency } from "@/features/settings/queries";
 import { CONTRACT_STATUSES } from "@/lib/status";
-import { formatDate, formatMoney } from "@/lib/format";
+import { formatDate, formatMoney, isoDaysFromNow } from "@/lib/format";
 
 export const metadata = { title: "Contracts" };
 
@@ -24,7 +24,7 @@ export default async function ContractsPage() {
     sb.from("clients").select("id, name").is("deleted_at", null).order("name"),
     sb.from("projects").select("id, name, client_id").is("deleted_at", null),
   ]);
-  const soon = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10);
+  const soon = isoDaysFromNow(30);
   return (
     <>
       <PageHeader

@@ -23,21 +23,37 @@ export function Field({
   className?: string;
   children: React.ReactNode;
 }) {
+  // Associate the label (and help/error text) with the single child control automatically.
+  const autoId = React.useId();
+  const child = React.isValidElement<{ id?: string; "aria-describedby"?: string; "aria-invalid"?: boolean }>(children) ? children : null;
+  const controlId = htmlFor ?? child?.props.id ?? autoId;
+  const messageId = `${controlId}-message`;
+  const message = error ?? hint;
+  const control =
+    child && typeof child.type !== "symbol"
+      ? React.cloneElement(child, {
+          id: controlId,
+          "aria-describedby": message ? messageId : child.props["aria-describedby"],
+          "aria-invalid": error ? true : child.props["aria-invalid"],
+        })
+      : children;
   return (
     <div className={cn("grid gap-1.5", className)}>
       {label ? (
-        <Label htmlFor={htmlFor}>
+        <Label htmlFor={controlId}>
           {label}
           {required ? <span className="text-destructive">*</span> : null}
         </Label>
       ) : null}
-      {children}
+      {control}
       {error ? (
-        <p role="alert" className="text-[12px] text-destructive">
+        <p id={messageId} role="alert" className="text-[12px] text-destructive">
           {error}
         </p>
       ) : hint ? (
-        <p className="text-[12px] text-muted-foreground">{hint}</p>
+        <p id={messageId} className="text-[12px] text-muted-foreground">
+          {hint}
+        </p>
       ) : null}
     </div>
   );

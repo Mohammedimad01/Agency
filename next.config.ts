@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
   // correct choice here. See docs/ARCHITECTURE.md → "Rendering model".
   cacheComponents: false,
   poweredByHeader: false,
+  // Dev-only: don't print server action arguments (they include passwords and form data).
+  logging: { serverFunctions: false },
   serverExternalPackages: ["@react-pdf/renderer"],
   experimental: {
     serverActions: { bodySizeLimit: "2mb" },

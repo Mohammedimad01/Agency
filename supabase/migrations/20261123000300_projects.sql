@@ -56,8 +56,6 @@ create table public.projects (
   lead_id               uuid references public.leads(id) on delete set null,
   description           text,
   scope                 text,
-  budget_cents          bigint check (budget_cents >= 0),
-  contract_value_cents  bigint check (contract_value_cents >= 0),
   start_date            date,
   due_date              date,
   completed_at          timestamptz,
@@ -79,6 +77,18 @@ create index projects_org_status_idx on public.projects (organization_id, status
 create index projects_client_idx on public.projects (client_id);
 create index projects_pm_idx on public.projects (project_manager_id);
 create trigger trg_projects_updated before update on public.projects
+  for each row execute function public.set_updated_at();
+
+-- Project money lives in its own table so RLS can hide it from delivery roles
+-- (RLS is row-level: anyone who can see a project row would otherwise see its budget).
+create table public.project_finances (
+  project_id            uuid primary key references public.projects(id) on delete cascade,
+  organization_id       uuid not null references public.organizations(id) on delete cascade,
+  budget_cents          bigint check (budget_cents >= 0),
+  contract_value_cents  bigint check (contract_value_cents >= 0),
+  updated_at            timestamptz not null default now()
+);
+create trigger trg_project_finances_updated before update on public.project_finances
   for each row execute function public.set_updated_at();
 
 alter table public.meeting_records

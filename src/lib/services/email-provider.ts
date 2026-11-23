@@ -44,7 +44,7 @@ class ResendProvider implements EmailProvider {
 class ConsoleProvider implements EmailProvider {
   readonly name = "console";
   async send(email: OutgoingEmail) {
-    const links = [...email.html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).filter((l) => l && !l.startsWith("mailto:"));
+    const links = [...email.html.matchAll(/href="([^"]+)"/g)].map((m) => (m[1] ?? "").replace(/&amp;/g, "&")).filter((l) => l && !l.startsWith("mailto:"));
     console.info(`\n[email:console] → ${email.to}\n  Subject: ${email.subject}\n  Links: ${links.join("\n         ") || "—"}\n`);
     return { id: `console_${Date.now()}` };
   }

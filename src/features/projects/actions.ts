@@ -17,13 +17,17 @@ export async function createProject(input: unknown) {
       .from("projects")
       .insert({
         organization_id: ctx.organizationId, code: "", name: d.name, client_id: d.client_id, service_id: d.service_id ?? null,
-        description: d.description ?? null, scope: d.scope ?? null, budget_cents: d.budget ?? null, contract_value_cents: d.contract_value ?? null,
+        description: d.description ?? null, scope: d.scope ?? null,
         start_date: d.start_date ?? null, due_date: d.due_date ?? null, priority: d.priority, status: d.status as never,
         project_manager_id: d.project_manager_id ?? ctx.userId, internal_notes: d.internal_notes ?? null, progress_mode: d.progress_mode, created_by: ctx.userId,
       })
       .select("id")
       .single();
     if (error) dbError(error);
+    if (d.budget !== null || d.contract_value !== null) {
+      const { error: fErr } = await sb.from("project_finances").insert({ project_id: data.id, organization_id: ctx.organizationId, budget_cents: d.budget ?? null, contract_value_cents: d.contract_value ?? null });
+      if (fErr) dbError(fErr);
+    }
     const members = [...new Set(d.member_ids)].filter(Boolean);
     if (members.length) {
       const { error: mErr } = await sb.from("project_members").insert(members.map((m) => ({ project_id: data.id, profile_id: m, added_by: ctx.userId })));
@@ -48,7 +52,7 @@ export async function updateProject(id: string, input: unknown) {
       .from("projects")
       .update({
         name: d.name, client_id: d.client_id, service_id: d.service_id ?? null, description: d.description ?? null, scope: d.scope ?? null,
-        budget_cents: d.budget ?? null, contract_value_cents: d.contract_value ?? null, start_date: d.start_date ?? null, due_date: d.due_date ?? null,
+        start_date: d.start_date ?? null, due_date: d.due_date ?? null,
         priority: d.priority, status: d.status as never, project_manager_id: d.project_manager_id ?? null, internal_notes: d.internal_notes ?? null,
         progress_mode: d.progress_mode, ...(d.progress_mode === "manual" && d.progress !== undefined ? { progress: d.progress } : {}),
       })
@@ -57,6 +61,13 @@ export async function updateProject(id: string, input: unknown) {
       .maybeSingle();
     if (error) dbError(error);
     if (!data) throw new ActionError("You can't edit this project.");
+    // Money fields are only written by roles allowed to see them (RLS on project_finances enforces this too).
+    if (ctx.can("projects.manage") || ctx.can("finance.manage")) {
+      const { error: fErr } = await sb
+        .from("project_finances")
+        .upsert({ project_id: id, organization_id: ctx.organizationId, budget_cents: d.budget ?? null, contract_value_cents: d.contract_value ?? null });
+      if (fErr) dbError(fErr);
+    }
     revalidatePath(path(id));
     return null;
   }, "Project updated");

@@ -118,12 +118,13 @@ begin
   update public.proposals set status = 'sent' where id = pr_globex;
 
   -- Projects -----------------------------------------------------------------
-  insert into public.projects (organization_id, name, client_id, service_id, proposal_id, description, scope, budget_cents,
-                               contract_value_cents, start_date, priority, status, project_manager_id, internal_notes, created_by)
+  insert into public.projects (organization_id, name, client_id, service_id, proposal_id, description, scope,
+                               start_date, priority, status, project_manager_id, internal_notes, created_by)
   values (v_org, 'Acme Corporate Website', c_acme, s_web, pr_acme, 'Corporate website redesign with shipment tracking.',
-          'Design and build of the marketing website, CMS and tracking widget.', 900000, 974400, current_date - 30, 'high',
+          'Design and build of the marketing website, CMS and tracking widget.', current_date - 30, 'high',
           'in_progress', u_pm, 'Client prefers async updates. Legal review needed for the privacy page.', u_owner)
   returning id into p_acme;
+  insert into public.project_finances (project_id, organization_id, budget_cents, contract_value_cents) values (p_acme, v_org, 900000, 987525);
   update public.proposals set project_id = p_acme where id = pr_acme;
   insert into public.project_members (project_id, profile_id, role, added_by) values
     (p_acme, u_dev, 'Lead developer', u_pm), (p_acme, u_design, 'Designer', u_pm);
@@ -133,19 +134,21 @@ begin
     (select id from public.milestones where project_id = p_acme and sort_order <= 4);
   update public.tasks set status = 'in_progress' where project_id = p_acme and title = 'Build pages & components';
 
-  insert into public.projects (organization_id, name, client_id, service_id, description, budget_cents, start_date, due_date,
+  insert into public.projects (organization_id, name, client_id, service_id, description, start_date, due_date,
                                priority, status, project_manager_id, created_by)
-  values (v_org, 'Globex Retail Dashboards', c_globex, s_bi, 'Power BI reporting for 40 stores.', 570000, current_date + 7,
+  values (v_org, 'Globex Retail Dashboards', c_globex, s_bi, 'Power BI reporting for 40 stores.', current_date + 7,
           current_date + 42, 'medium', 'planning', u_pm, u_owner)
   returning id into p_globex;
+  insert into public.project_finances (project_id, organization_id, budget_cents) values (p_globex, v_org, 570000);
   insert into public.project_members (project_id, profile_id, role, added_by) values (p_globex, u_dev, 'BI developer', u_pm);
   perform public.apply_project_template(p_globex, tpl_bi, current_date + 7);
 
-  insert into public.projects (organization_id, name, client_id, service_id, description, budget_cents, contract_value_cents,
+  insert into public.projects (organization_id, name, client_id, service_id, description,
                                start_date, due_date, status, project_manager_id, created_by)
-  values (v_org, 'Acme Brand Refresh', c_acme, s_brand, 'Logo and brand guideline refresh.', 300000, 300000,
+  values (v_org, 'Acme Brand Refresh', c_acme, s_brand, 'Logo and brand guideline refresh.',
           current_date - 120, current_date - 80, 'completed', u_pm, u_owner)
   returning id into p_old;
+  insert into public.project_finances (project_id, organization_id, budget_cents, contract_value_cents) values (p_old, v_org, 300000, 300000);
 
   -- Deliverable awaiting client review ----------------------------------------
   insert into public.files (organization_id, bucket, path, name, mime_type, size_bytes, category, visibility, project_id, client_id, uploaded_by)

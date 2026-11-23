@@ -122,19 +122,22 @@ create table private.rate_limits (
   primary key (key, window_start)
 );
 
-create or replace function public.check_rate_limit(p_key text, p_max int, p_window_seconds int)
+-- p_cost = 1 records an attempt; p_cost = 0 only checks (used to count failed logins, not successful ones).
+create or replace function public.check_rate_limit(p_key text, p_max int, p_window_seconds int, p_cost int default 1)
 returns boolean language plpgsql security definer set search_path = '' as $$
 declare v_window timestamptz; v_count int;
 begin
   v_window := to_timestamp(floor(extract(epoch from now()) / p_window_seconds) * p_window_seconds);
-  insert into private.rate_limits (key, window_start, count) values (p_key, v_window, 1)
-  on conflict (key, window_start) do update set count = private.rate_limits.count + 1
+  insert into private.rate_limits (key, window_start, count) values (p_key, v_window, p_cost)
+  on conflict (key, window_start) do update set count = private.rate_limits.count + p_cost
   returning count into v_count;
-  delete from private.rate_limits where window_start < now() - interval '1 day';
-  return v_count <= p_max;
+  if random() < 0.05 then
+    delete from private.rate_limits where window_start < now() - interval '1 day';
+  end if;
+  return case when p_cost = 0 then v_count < p_max else v_count <= p_max end;
 end $$;
-revoke execute on function public.check_rate_limit(text, int, int) from public, anon, authenticated;
-grant execute on function public.check_rate_limit(text, int, int) to service_role;
+revoke execute on function public.check_rate_limit(text, int, int, int) from public, anon, authenticated;
+grant execute on function public.check_rate_limit(text, int, int, int) to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Website content (editable from /admin/website)

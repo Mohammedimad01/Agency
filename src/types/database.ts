@@ -1271,6 +1271,44 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"project_finances": {
+                  Row: {
+                    "budget_cents": number | null,"contract_value_cents": number | null,"organization_id": string,"project_id": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "budget_cents"?: number | null,"contract_value_cents"?: number | null,"organization_id": string,"project_id": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "budget_cents"?: number | null,"contract_value_cents"?: number | null,"organization_id"?: string,"project_id"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "project_finances_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "organizations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "project_finances_organization_id_fkey"
+      columns: ["organization_id"]
+isOneToOne: false
+      referencedRelation: "portal_agency"
+      referencedColumns: ["organization_id"]
+    },{
+      foreignKeyName: "project_finances_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: true
+      referencedRelation: "portal_projects"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "project_finances_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: true
+      referencedRelation: "projects"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"project_members": {
                   Row: {
                     "added_at": string,"added_by": string | null,"profile_id": string,"project_id": string,"role": string | null
@@ -1401,14 +1439,14 @@ isOneToOne: false
                   ]
                 },"projects": {
                   Row: {
-                    "budget_cents": number | null,"client_id": string,"code": string,"completed_at": string | null,"contract_value_cents": number | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"description": string | null,"due_date": string | null,"id": string,"internal_notes": string | null,"lead_id": string | null,"name": string,"organization_id": string,"priority": Database["public"]['Enums']["priority_level"],"progress": number,"progress_mode": string,"project_manager_id": string | null,"proposal_id": string | null,"review_requested_at": string | null,"scope": string | null,"service_id": string | null,"start_date": string | null,"status": Database["public"]['Enums']["project_status"],"template_id": string | null,"updated_at": string
+                    "client_id": string,"code": string,"completed_at": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"description": string | null,"due_date": string | null,"id": string,"internal_notes": string | null,"lead_id": string | null,"name": string,"organization_id": string,"priority": Database["public"]['Enums']["priority_level"],"progress": number,"progress_mode": string,"project_manager_id": string | null,"proposal_id": string | null,"review_requested_at": string | null,"scope": string | null,"service_id": string | null,"start_date": string | null,"status": Database["public"]['Enums']["project_status"],"template_id": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "budget_cents"?: number | null,"client_id": string,"code": string,"completed_at"?: string | null,"contract_value_cents"?: number | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"description"?: string | null,"due_date"?: string | null,"id"?: string,"internal_notes"?: string | null,"lead_id"?: string | null,"name": string,"organization_id": string,"priority"?: Database["public"]['Enums']["priority_level"],"progress"?: number,"progress_mode"?: string,"project_manager_id"?: string | null,"proposal_id"?: string | null,"review_requested_at"?: string | null,"scope"?: string | null,"service_id"?: string | null,"start_date"?: string | null,"status"?: Database["public"]['Enums']["project_status"],"template_id"?: string | null,"updated_at"?: string
+                    "client_id": string,"code": string,"completed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"description"?: string | null,"due_date"?: string | null,"id"?: string,"internal_notes"?: string | null,"lead_id"?: string | null,"name": string,"organization_id": string,"priority"?: Database["public"]['Enums']["priority_level"],"progress"?: number,"progress_mode"?: string,"project_manager_id"?: string | null,"proposal_id"?: string | null,"review_requested_at"?: string | null,"scope"?: string | null,"service_id"?: string | null,"start_date"?: string | null,"status"?: Database["public"]['Enums']["project_status"],"template_id"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "budget_cents"?: number | null,"client_id"?: string,"code"?: string,"completed_at"?: string | null,"contract_value_cents"?: number | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"description"?: string | null,"due_date"?: string | null,"id"?: string,"internal_notes"?: string | null,"lead_id"?: string | null,"name"?: string,"organization_id"?: string,"priority"?: Database["public"]['Enums']["priority_level"],"progress"?: number,"progress_mode"?: string,"project_manager_id"?: string | null,"proposal_id"?: string | null,"review_requested_at"?: string | null,"scope"?: string | null,"service_id"?: string | null,"start_date"?: string | null,"status"?: Database["public"]['Enums']["project_status"],"template_id"?: string | null,"updated_at"?: string
+                    "client_id"?: string,"code"?: string,"completed_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"description"?: string | null,"due_date"?: string | null,"id"?: string,"internal_notes"?: string | null,"lead_id"?: string | null,"name"?: string,"organization_id"?: string,"priority"?: Database["public"]['Enums']["priority_level"],"progress"?: number,"progress_mode"?: string,"project_manager_id"?: string | null,"proposal_id"?: string | null,"review_requested_at"?: string | null,"scope"?: string | null,"service_id"?: string | null,"start_date"?: string | null,"status"?: Database["public"]['Enums']["project_status"],"template_id"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -2614,7 +2652,7 @@ isOneToOne: false
 { Args: { "p_project": string }; Returns: boolean
                            },
 "check_rate_limit":
-{ Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
+{ Args: { "p_cost"?: number,"p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
                            },
 "claim_email_batch":
 { Args: { "p_limit"?: number }; Returns: {

@@ -42,13 +42,19 @@ export function Conversation({
   }, [conversationId]);
 
   useEffect(() => {
-    void load();
+    let active = true;
+    listMessages(conversationId).then((m) => {
+      if (!active) return;
+      setMessages(m);
+      setLoaded(true);
+    });
     const sb = getBrowserClient();
     const ch = sb
       .channel(`conversation:${conversationId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${conversationId}` }, () => void load())
       .subscribe();
     return () => {
+      active = false;
       void sb.removeChannel(ch);
     };
   }, [conversationId, load]);

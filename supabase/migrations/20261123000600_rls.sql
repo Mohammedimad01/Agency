@@ -12,7 +12,7 @@ begin
   foreach t in array array[
     'organizations','profiles','roles','permissions','role_permissions','team_members','settings',
     'services','clients','client_contacts','leads','lead_activities','lead_notes','meeting_records',
-    'project_templates','project_template_milestones','project_template_tasks','projects','project_members',
+    'project_templates','project_template_milestones','project_template_tasks','projects','project_finances','project_members',
     'milestones','tasks','task_comments','time_entries','files','deliverables','deliverable_versions',
     'deliverable_reviews','revisions','proposals','proposal_items','contracts','contract_versions',
     'invoices','invoice_items','payments','expenses','conversations','messages','message_attachments',
@@ -205,6 +205,13 @@ create policy "projects: update" on public.projects for update to authenticated
   using (public.can_manage_project(id)) with check (public.is_org_member(organization_id));
 create policy "projects: delete" on public.projects for delete to authenticated
   using (public.has_permission(organization_id, 'projects.manage'));
+
+create policy "project_finances: read" on public.project_finances for select to authenticated
+  using (public.has_permission(organization_id, 'finance.view') or public.has_permission(organization_id, 'projects.manage'));
+create policy "project_finances: write" on public.project_finances for all to authenticated
+  using (public.has_permission(organization_id, 'finance.manage') or public.has_permission(organization_id, 'projects.manage'))
+  with check ((public.has_permission(organization_id, 'finance.manage') or public.has_permission(organization_id, 'projects.manage'))
+              and organization_id = (select p.organization_id from public.projects p where p.id = project_id));
 
 create policy "project_members: read" on public.project_members for select to authenticated
   using (public.can_view_project(project_id));

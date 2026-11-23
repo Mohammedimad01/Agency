@@ -19,7 +19,7 @@ language sql stable security invoker set search_path = '' as $$
     coalesce((select sum(i.total_cents) from public.invoices i
               where i.organization_id = p_org and i.deleted_at is null and i.status not in ('draft','cancelled')
                 and date_trunc('month', i.issue_date) = m.month), 0)::bigint
-  from months m order by m.month;
+  from months m where public.has_permission(p_org, 'finance.view') order by m.month;
 $$;
 
 create or replace function public.report_revenue_by_client(p_org uuid, p_from date, p_to date)
@@ -34,7 +34,7 @@ language sql stable security invoker set search_path = '' as $$
               and i.status in ('sent','partially_paid','overdue')), 0)::bigint,
     (select count(*) from public.projects pr where pr.client_id = c.id and pr.deleted_at is null)::int
   from public.clients c
-  where c.organization_id = p_org and c.deleted_at is null
+  where c.organization_id = p_org and c.deleted_at is null and public.has_permission(p_org, 'finance.view')
   order by 3 desc, 4 desc;
 $$;
 
@@ -48,6 +48,7 @@ language sql stable security invoker set search_path = '' as $$
   left join public.projects pr on pr.id = p.project_id
   left join public.services s on s.id = pr.service_id
   where p.organization_id = p_org and p.status = 'completed' and p.payment_date between p_from and p_to
+    and public.has_permission(p_org, 'finance.view')
   group by 1 order by 2 desc;
 $$;
 
@@ -57,7 +58,7 @@ returns table (project_id uuid, code text, name text, client_name text, status p
                labor_cost_cents bigint, profit_cents bigint, hours numeric)
 language sql stable security invoker set search_path = '' as $$
   with base as (
-    select pr.id, pr.code, pr.name, c.name as client_name, pr.status, coalesce(pr.contract_value_cents, 0) as contract_value_cents,
+    select pr.id, pr.code, pr.name, c.name as client_name, pr.status, coalesce(pf.contract_value_cents, 0) as contract_value_cents,
       coalesce((select sum(i.total_cents) from public.invoices i where i.project_id = pr.id and i.deleted_at is null and i.status not in ('draft','cancelled')), 0) as invoiced,
       coalesce((select sum(p.amount_cents) from public.payments p where p.project_id = pr.id and p.status = 'completed'), 0) as collected,
       coalesce((select sum(e.amount_cents) from public.expenses e where e.project_id = pr.id and e.deleted_at is null), 0) as expenses,
@@ -67,7 +68,9 @@ language sql stable security invoker set search_path = '' as $$
                 where te.project_id = pr.id), 0) as labor,
       coalesce((select sum(te.minutes) from public.time_entries te where te.project_id = pr.id), 0) / 60.0 as hours
     from public.projects pr join public.clients c on c.id = pr.client_id
+    left join public.project_finances pf on pf.project_id = pr.id
     where pr.organization_id = p_org and pr.deleted_at is null
+      and public.has_permission(p_org, 'finance.view')
   )
   select id, code, name, client_name, status, contract_value_cents::bigint, invoiced::bigint, collected::bigint, expenses::bigint,
          labor::bigint, (collected - expenses - labor)::bigint, round(hours, 1)

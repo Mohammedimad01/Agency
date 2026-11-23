@@ -14,7 +14,7 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { UserAvatar } from "@/components/ui/avatar";
 import { getFinanceSummary, getLeadFunnel, getLeadMetrics, getMonthlyFinance, getProjectMetrics, getTeamWorkload } from "@/features/reports/queries";
 import { getCurrency } from "@/features/settings/queries";
-import { formatDate, formatMoney, formatRelative } from "@/lib/format";
+import { formatDate, formatMoney, formatRelative, isoDaysFromNow } from "@/lib/format";
 import { PAYMENT_METHODS, PROJECT_STATUSES } from "@/lib/status";
 import { ROLE_LABELS, type TeamRole } from "@/lib/permissions";
 
@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   const currency = await getCurrency(ctx.organizationId);
   const range12 = { from: format(startOfMonth(subMonths(new Date(), 11)), "yyyy-MM-dd"), to: format(new Date(), "yyyy-MM-dd") };
   const range6 = { from: format(startOfMonth(subMonths(new Date(), 5)), "yyyy-MM-dd"), to: range12.to };
-  const in14 = format(new Date(Date.now() + 14 * 864e5), "yyyy-MM-dd");
+  const in14 = isoDaysFromNow(14);
 
   const [finance, monthly, leadMetrics, funnel, projects, workload, recentPayments, deadlines, milestones, activity, pendingTasks] = await Promise.all([
     getFinanceSummary(ctx),

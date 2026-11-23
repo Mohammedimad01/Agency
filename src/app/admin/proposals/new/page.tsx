@@ -6,6 +6,7 @@ import { getCurrency, getOrgSettings } from "@/features/settings/queries";
 import { bpsToPercent } from "@/lib/finance/calculations";
 import { createClient } from "@/lib/supabase/server";
 import { minorToInput } from "@/lib/finance/money";
+import { isoDaysFromNow } from "@/lib/format";
 
 export const metadata = { title: "New proposal" };
 
@@ -13,7 +14,7 @@ export default async function NewProposal({ searchParams }: { searchParams: Prom
   const ctx = await requireTeam("proposals.manage");
   const { client, lead } = await searchParams;
   const [currency, settings, opts] = await Promise.all([getCurrency(ctx.organizationId), getOrgSettings(ctx.organizationId), editorOptions(ctx.organizationId, true)]);
-  const validUntil = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10);
+  const validUntil = isoDaysFromNow(30);
   let prefill = {};
   if (lead) {
     const sb = await createClient();

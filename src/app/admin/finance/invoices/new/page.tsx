@@ -4,6 +4,7 @@ import { DocumentEditor } from "@/features/finance/components/document-editor";
 import { blankEditor, editorOptions } from "@/features/finance/editor-data";
 import { getCurrency, getOrgSettings } from "@/features/settings/queries";
 import { bpsToPercent } from "@/lib/finance/calculations";
+import { isoDaysFromNow } from "@/lib/format";
 
 export const metadata = { title: "New invoice" };
 
@@ -22,7 +23,7 @@ export default async function NewInvoice({ searchParams }: { searchParams: Promi
         projects={opts.projects}
         services={opts.services}
         initial={blankEditor({
-          client_id: client ?? "", project_id: project ?? "", due_date: new Date(Date.now() + terms * 864e5).toISOString().slice(0, 10),
+          client_id: client ?? "", project_id: project ?? "", due_date: isoDaysFromNow(terms),
           tax_rate: bpsToPercent(settings?.default_tax_rate_bps ?? 0), payment_terms: `Payment due within ${terms} days.`,
         })}
       />

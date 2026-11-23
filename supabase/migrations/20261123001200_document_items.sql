@@ -92,14 +92,15 @@ begin
       raise exception 'You need project management permission to create the project.' using errcode = 'insufficient_privilege';
     end if;
     insert into public.projects (organization_id, code, name, client_id, service_id, lead_id, description, start_date, due_date,
-                                 budget_cents, project_manager_id, status, created_by)
+                                 project_manager_id, status, created_by)
     values (v_lead.organization_id, '', p_project->>'name', v_client,
             coalesce(nullif(p_project->>'service_id', '')::uuid, v_lead.service_id), v_lead.id,
             coalesce(nullif(p_project->>'description', ''), v_lead.description),
             nullif(p_project->>'start_date', '')::date, nullif(p_project->>'due_date', '')::date,
-            coalesce(nullif(p_project->>'budget_cents', '')::bigint, v_lead.budget_cents),
             coalesce(nullif(p_project->>'project_manager_id', '')::uuid, (select auth.uid())), 'planning', (select auth.uid()))
     returning id into v_project;
+    insert into public.project_finances (project_id, organization_id, budget_cents)
+    values (v_project, v_lead.organization_id, coalesce(nullif(p_project->>'budget_cents', '')::bigint, v_lead.budget_cents));
     if nullif(p_project->>'template_id', '') is not null then
       perform public.apply_project_template(v_project, (p_project->>'template_id')::uuid, nullif(p_project->>'start_date', '')::date);
     end if;

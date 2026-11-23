@@ -22,13 +22,19 @@ export function NotificationBell({ userId, allHref }: { userId: string; allHref:
   }, []);
 
   useEffect(() => {
-    void load();
+    let active = true;
+    listNotifications(15).then((r) => {
+      if (!active) return;
+      setItems(r.items);
+      setUnread(r.unread);
+    });
     const sb = getBrowserClient();
     const channel = sb
       .channel(`notifications:${userId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications", filter: `recipient_id=eq.${userId}` }, () => void load())
       .subscribe();
     return () => {
+      active = false;
       void sb.removeChannel(channel);
     };
   }, [userId, load]);

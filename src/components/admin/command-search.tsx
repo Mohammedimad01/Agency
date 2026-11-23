@@ -28,13 +28,11 @@ export function CommandSearch({ nav }: { nav: AdminNavItem[] }) {
   }, []);
 
   useEffect(() => {
-    if (query.trim().length < 2) {
-      setHits([]);
-      return;
-    }
+    if (query.trim().length < 2) return;
     const t = setTimeout(() => start(async () => setHits(await globalSearch(query))), 180);
     return () => clearTimeout(t);
   }, [query]);
+  const visibleHits = query.trim().length < 2 ? [] : hits;
 
   const go = (href: string) => {
     setOpen(false);
@@ -61,9 +59,9 @@ export function CommandSearch({ nav }: { nav: AdminNavItem[] }) {
             <CommandInput placeholder="Type to search…" value={query} onValueChange={setQuery} />
             <CommandList>
               <CommandEmpty>{pending ? "Searching…" : "No results."}</CommandEmpty>
-              {hits.length ? (
+              {visibleHits.length ? (
                 <CommandGroup heading="Records">
-                  {hits.map((h) => {
+                  {visibleHits.map((h) => {
                     const Icon = ICON[h.type];
                     return (
                       <CommandItem key={`${h.type}-${h.id}`} value={`${h.type}-${h.id}`} onSelect={() => go(h.href)}>

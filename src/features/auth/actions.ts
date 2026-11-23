@@ -18,19 +18,23 @@ async function ipKey() {
   return createHash("sha256").update(`${ip}:${process.env.RATE_LIMIT_SALT ?? ""}`).digest("hex").slice(0, 24);
 }
 
-async function rateLimit(key: string, max: number, windowSeconds: number) {
-  const { data } = await createAdminClient().rpc("check_rate_limit", { p_key: key, p_max: max, p_window_seconds: windowSeconds });
+async function rateLimit(key: string, max: number, windowSeconds: number, cost = 1) {
+  const { data } = await createAdminClient().rpc("check_rate_limit", { p_key: key, p_max: max, p_window_seconds: windowSeconds, p_cost: cost });
   if (data === false) throw new ActionError("Too many attempts. Please wait a few minutes and try again.");
 }
 
 export async function signIn(input: unknown) {
   const result = await publicAction(async () => {
     const data = parseInput(loginSchema, input);
-    await rateLimit(`login:${await ipKey()}`, 20, 900);
-    await rateLimit(`login:email:${data.email}`, 10, 900);
+    // Only failed attempts count towards the limits (checked first, recorded on failure).
+    const ipLimitKey = `login:${await ipKey()}`;
+    const emailLimitKey = `login:email:${data.email}`;
+    await rateLimit(ipLimitKey, 30, 900, 0);
+    await rateLimit(emailLimitKey, 10, 900, 0);
     const supabase = await createClient();
     const { error } = await supabase.auth.signInWithPassword({ email: data.email, password: data.password });
     if (error) {
+      await Promise.all([rateLimit(ipLimitKey, 30, 900).catch(() => null), rateLimit(emailLimitKey, 10, 900).catch(() => null)]);
       if (/confirm/i.test(error.message)) throw new ActionError("Please confirm your email address first — check your inbox for the link.");
       throw new ActionError("Incorrect email or password.");
     }
