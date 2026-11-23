@@ -6,7 +6,7 @@ import { TabNav } from "@/components/shared/tab-nav";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { NotificationPrefsForm, OrgSettingsForm, PasswordForm, ProfileForm, RunAutomationsButton } from "@/features/settings/components/settings-forms";
 import { PermissionToggle } from "@/features/team/components/team-forms";
-import { EMAIL_PREF_TYPES } from "@/features/settings/actions";
+import { EMAIL_PREF_TYPES } from "@/features/settings/constants";
 import { getOrgSettings } from "@/features/settings/queries";
 import { ROLE_LABELS, TEAM_ROLES } from "@/lib/permissions";
 import { bpsToPercent } from "@/lib/finance/calculations";

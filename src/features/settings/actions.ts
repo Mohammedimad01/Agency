@@ -8,6 +8,7 @@ import { getUser } from "@/lib/auth/session";
 import { optionalText, percentInput, requiredText } from "@/lib/validations/common";
 import { passwordSchema } from "@/features/auth/schemas";
 import { dispatchOutbox } from "@/lib/email/dispatcher";
+import { EMAIL_PREF_TYPES } from "./constants";
 
 const profileSchema = z.object({ full_name: requiredText("Name", 120), phone: optionalText(40), job_title: optionalText(100), timezone: optionalText(64) });
 
@@ -39,17 +40,6 @@ export async function changeMyPassword(input: unknown) {
   }, "Password changed");
 }
 
-export const EMAIL_PREF_TYPES = {
-  new_lead: "New leads",
-  new_project: "New project started",
-  milestone_update: "Milestone updates",
-  proposal_sent: "New proposals",
-  invoice_generated: "New invoices",
-  payment_reminder: "Payment reminders",
-  deliverable_ready: "Deliverables ready for review",
-  project_completed: "Project completed",
-  review_request: "Feedback requests",
-} as const;
 
 export async function updateNotificationPrefs(input: { email_enabled: boolean; email_types: Record<string, boolean> }) {
   return publicAction(async () => {
