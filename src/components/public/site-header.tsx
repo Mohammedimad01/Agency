@@ -18,7 +18,9 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <header className={cn("sticky top-0 z-40 border-b bg-background/90 backdrop-blur transition-colors", scrolled ? "border-border" : "border-transparent")}>
