@@ -2649,7 +2649,7 @@ isOneToOne: false
 { Args: { "p_error": string,"p_id": string,"p_message_id": string,"p_ok": boolean,"p_provider": string }; Returns: undefined
                            },
 "convert_lead":
-{ Args: { "p_client"?: Json,"p_lead": string,"p_project"?: Json }; Returns: Json
+{ Args: { "p_client"?: Json,"p_lead": string,"p_mark_won"?: boolean,"p_project"?: Json }; Returns: Json
                            },
 "create_invoice_from_proposal":
 { Args: { "p_due_days"?: number,"p_percent"?: number,"p_proposal": string }; Returns: string
@@ -2689,6 +2689,9 @@ isOneToOne: false
                            },
 "portal_update_my_contact":
 { Args: { "p_full_name": string,"p_job_title": string,"p_phone": string }; Returns: undefined
+                           },
+"replace_document_items":
+{ Args: { "p_id": string,"p_items": Json,"p_kind": string }; Returns: undefined
                            },
 "report_lead_breakdown":
 { Args: { "p_from": string,"p_org": string,"p_to": string }; Returns: {

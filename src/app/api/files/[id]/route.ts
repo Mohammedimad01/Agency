@@ -26,6 +26,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const { data: file } = await createAdminClient().from("files").select("bucket, path, name").eq("id", id).single();
   if (!file) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const inline = request.nextUrl.searchParams.get("inline") === "1";
-  const url = await createSignedDownload(file.bucket, file.path, inline ? "" : file.name);
-  return NextResponse.redirect(inline ? url.replace(/[?&]download=[^&]*/, "") : url, { headers: { "Cache-Control": "no-store" } });
+  try {
+    const url = await createSignedDownload(file.bucket, file.path, inline ? "" : file.name);
+    return NextResponse.redirect(inline ? url.replace(/[?&]download=[^&]*/, "") : url, { headers: { "Cache-Control": "no-store" } });
+  } catch {
+    return NextResponse.json({ error: "This file is no longer available." }, { status: 410 });
+  }
 }
