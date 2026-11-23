@@ -12,20 +12,16 @@ import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Projects" };
 
-export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ view?: string; month?: string; scope?: string }> }) {
+export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ view?: string; month?: string }> }) {
   const ctx = await requireTeam();
-  const { view = "list", month, scope } = await searchParams;
+  const { view = "list", month } = await searchParams;
   const sb = await createClient();
-  let q = sb
+  const { data } = await sb
     .from("projects")
     .select("id, code, name, status, priority, progress, due_date, client:clients(name), service:services(name), manager:profiles!projects_project_manager_id_fkey(full_name), project_members(profile_id)")
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
-  if (scope === "mine") q = q.or(`project_manager_id.eq.${ctx.userId}`);
-  const { data } = await q;
-  const rows = (data ?? [])
-    .filter((p) => scope !== "mine" || true)
-    .map((p) => ({
+  const rows = (data ?? []).map((p) => ({
       id: p.id, code: p.code, name: p.name, client: p.client?.name ?? "—", status: p.status, priority: p.priority, progress: p.progress,
       due_date: p.due_date, manager: p.manager?.full_name ?? null, service: p.service?.name ?? null,
     }));

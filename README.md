@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bismillah — Agency Operating System
 
-## Getting Started
+A complete operating system for a digital agency, in one Next.js + Supabase codebase:
 
-First, run the development server:
+- **Public website** — editorial marketing site, services, case studies, pricing, contact and booking forms. Every inquiry lands in the CRM, scored and assigned.
+- **Admin command centre** (`/admin`) — dashboard, lead pipeline, clients, projects (list / board / calendar / workspace), templates, proposals, contracts, invoices, payments, expenses, reports, team, messaging, website CMS and settings.
+- **Client portal** (`/portal`) — a calm, private workspace where each client tracks progress, approves deliverables, accepts proposals, downloads invoices and messages the team.
+- **Automation engine** — database triggers, Supabase Cron and an idempotent email outbox implement the agency's workflows (no n8n, no paid automation tools).
+
+> The agency name is a placeholder. Change it (and the logo, colours, contact details) in [`src/config/site.ts`](src/config/site.ts) or via `NEXT_PUBLIC_*` environment variables — nothing else is hard-coded.
+
+## Stack
+
+Next.js 16 (App Router, TypeScript strict) · React 19 · Tailwind CSS 4 · shadcn-style components on Radix · React Hook Form + Zod · Supabase (Postgres, Auth, Storage, Realtime, Cron) · Recharts · TanStack Table · date-fns · Resend · @react-pdf/renderer · Vitest · Playwright.
+
+## Quick start (local)
+
+Requirements: Node 20.9+, Docker.
+
+```bash
+npm install
+```
+
+```bash
+npx supabase start
+```
+
+```bash
+cp .env.example .env.local
+```
+
+Fill `.env.local` with the URL / anon key / service-role key printed by `supabase start`, plus any random string for `CRON_SECRET` and `RATE_LIMIT_SALT`. Then:
+
+```bash
+npm run db:reset
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. Demo accounts (password `Password123!`):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Account | Role |
+|---|---|
+| owner@bismillah.dev | Owner (everything) |
+| pm@bismillah.dev | Project Manager |
+| dev@bismillah.dev | Developer (assigned projects only, no finance) |
+| design@bismillah.dev | Designer |
+| finance@bismillah.dev | Finance Manager |
+| client@acme.test | Client portal (Acme Logistics) |
+| client@globex.test | Client portal (Globex Retail) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Emails are printed to the dev-server console (`EMAIL_PROVIDER=console`); local Supabase also runs Mailpit at http://127.0.0.1:54324.
 
-## Learn More
+To start with an **empty** workspace instead of demo data, run `npx supabase db reset --no-seed` and open `/setup`.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Command | Purpose |
+|---|---|
+| `npm run dev` / `build` / `start` | Next.js |
+| `npm run typecheck` / `lint` | TypeScript and ESLint |
+| `npm test` | Unit tests (no services needed) |
+| `npm run test:integration` | RLS and end-to-end workflow tests against local Supabase |
+| `npm run test:e2e` | Browser tests (needs Supabase + the app running) |
+| `npm run db:reset` / `db:types` / `db:lint` | Database migrations, generated types, schema lint |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation
 
-## Deploy on Vercel
+| Document | Contents |
+|---|---|
+| [docs/PRD.md](docs/PRD.md) | Product requirements and scope |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Architecture, routes, rendering, security model, key decisions |
+| [docs/DATABASE.md](docs/DATABASE.md) | Schema, money handling, triggers, RPCs, reporting |
+| [docs/PERMISSIONS.md](docs/PERMISSIONS.md) | Roles, permission matrix, RLS strategy, client isolation |
+| [docs/AUTOMATION.md](docs/AUTOMATION.md) | The 12 workflows, scheduling, email outbox |
+| [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) | Tokens, typography, components, UX rules |
+| [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) | Every environment variable |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Supabase + Vercel production setup |
+| [docs/TESTING.md](docs/TESTING.md) | Test strategy and how to run each suite |
+| [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) | Progress log, open issues and next steps |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project layout
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+  app/(public)/      marketing site            app/admin/     internal dashboard
+  app/(auth)/        login, setup, invites     app/portal/    client portal
+  app/api/           files, PDFs, CSV, cron    app/auth/      email-link confirmation
+  components/        ui/ (primitives) · shared/ · public/ · admin/ · auth/
+  features/<module>/ actions.ts (server actions) · schemas.ts · queries · components/
+  lib/               supabase clients · auth DAL · permissions · finance · email · pdf · services
+  config/            site.ts (brand) · navigation
+supabase/
+  migrations/        schema, RLS, automation, portal views, storage, reporting
+  seed.sql           demo data (local only)
+tests/               unit · integration · e2e
+```
