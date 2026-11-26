@@ -1,4 +1,4 @@
-# Bismillah — Agency Operating System
+# Erlyst — Agency Operating System
 
 A complete operating system for a digital agency, in one Next.js + Supabase codebase:
 
@@ -8,6 +8,14 @@ A complete operating system for a digital agency, in one Next.js + Supabase code
 - **Automation engine** — database triggers, Supabase Cron and an idempotent email outbox implement the agency's workflows (no n8n, no paid automation tools).
 
 > The agency name is a placeholder. Change it (and the logo, colours, contact details) in [`src/config/site.ts`](src/config/site.ts) or via `NEXT_PUBLIC_*` environment variables — nothing else is hard-coded.
+
+## Where to sign in
+
+| Who | URL | Lands on |
+|---|---|---|
+| Owner, team and clients | **`/login`** (e.g. `http://localhost:3000/login`, or `https://your-domain.com/login`) — also linked as **"Client login"** in the site header | Team → `/admin`, clients → `/portal` |
+| First-time setup (empty database only) | `/setup` — creates the agency and the owner account, then disappears | `/admin` after email verification |
+| Forgot password | `/forgot-password` | `/reset-password` via emailed link |
 
 ## Stack
 
@@ -43,11 +51,11 @@ Open http://localhost:3000. Demo accounts (password `Password123!`):
 
 | Account | Role |
 |---|---|
-| owner@bismillah.dev | Owner (everything) |
-| pm@bismillah.dev | Project Manager |
-| dev@bismillah.dev | Developer (assigned projects only, no finance) |
-| design@bismillah.dev | Designer |
-| finance@bismillah.dev | Finance Manager |
+| erlyst.tech@gmail.com | Owner (everything) — local demo password only; in production create the owner at `/setup` with your own password |
+| pm@erlyst.dev | Project Manager |
+| dev@erlyst.dev | Developer (assigned projects only, no finance) |
+| design@erlyst.dev | Designer |
+| finance@erlyst.dev | Finance Manager |
 | client@acme.test | Client portal (Acme Logistics) |
 | client@globex.test | Client portal (Globex Retail) |
 

@@ -106,7 +106,7 @@ export function SetupForm() {
   const tz = typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC";
   const form = useForm<z.input<typeof setupSchema>>({
     resolver: zodResolver(setupSchema),
-    defaultValues: { agencyName: "Bismillah", fullName: "", email: "", password: "", currency: "USD", timezone: tz },
+    defaultValues: { agencyName: "Erlyst", fullName: "", email: "", password: "", currency: "USD", timezone: tz },
   });
   const e = form.formState.errors;
   if (done) {

@@ -1,4 +1,21 @@
 import {
+  Bot,
+  Boxes,
+  Briefcase,
+  FileText,
+  Gauge,
+  LayoutTemplate,
+  MapPin,
+  Megaphone,
+  Palette,
+  ReceiptText,
+  Search,
+  SearchCheck,
+  Server,
+  ShoppingCart,
+  Smartphone,
+  TrendingUp,
+  Wrench,
   AppWindow,
   BrainCircuit,
   ChartColumn,
@@ -25,9 +42,26 @@ const ICONS: Record<string, LucideIcon> = {
   workflow: Workflow,
   "code-2": CodeXml,
   "code-xml": CodeXml,
+  palette: Palette,
+  "shopping-cart": ShoppingCart,
+  smartphone: Smartphone,
+  briefcase: Briefcase,
+  "receipt-text": ReceiptText,
+  "file-text": FileText,
+  boxes: Boxes,
+  search: Search,
+  "search-check": SearchCheck,
+  gauge: Gauge,
+  "map-pin": MapPin,
+  megaphone: Megaphone,
+  bot: Bot,
+  wrench: Wrench,
+  server: Server,
+  "layout-template": LayoutTemplate,
+  "trending-up": TrendingUp,
 };
 
-export const SERVICE_ICON_OPTIONS = ["globe", "app-window", "pen-tool", "sparkles", "chart-column", "chart-pie", "brain-circuit", "workflow", "code-xml"];
+export const SERVICE_ICON_OPTIONS = Object.keys(ICONS).filter((k) => !["bar-chart-3", "pie-chart", "code-2"].includes(k));
 
 export function ServiceIcon({ name, className }: { name?: string | null; className?: string }) {
   const Icon = (name && ICONS[name]) || Layers;

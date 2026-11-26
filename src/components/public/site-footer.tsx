@@ -3,6 +3,7 @@ import { siteConfig } from "@/config/site";
 import { Logo } from "@/components/shared/logo";
 import { GitHubIcon, InstagramIcon, LinkedInIcon, XIcon } from "@/components/shared/social-icons";
 import type { PublicService } from "@/features/website/queries";
+import { groupServices } from "@/features/website/service-groups";
 
 export function SiteFooter({ services }: { services: PublicService[] }) {
   const year = new Date().getFullYear();
@@ -12,11 +13,12 @@ export function SiteFooter({ services }: { services: PublicService[] }) {
     { href: siteConfig.social.x, label: "X", Icon: XIcon },
     { href: siteConfig.social.github, label: "GitHub", Icon: GitHubIcon },
   ].filter((s) => s.href);
+  const { groups } = groupServices(services);
   return (
     <footer className="border-t bg-surface">
-      <div className="container-page grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(5,1fr)]">
         <div className="max-w-xs">
-          <Logo />
+          <Logo subline />
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{siteConfig.tagline}</p>
           <div className="mt-5 flex gap-1">
             {socials.map(({ href, label, Icon }) => (
@@ -26,7 +28,9 @@ export function SiteFooter({ services }: { services: PublicService[] }) {
             ))}
           </div>
         </div>
-        <FooterCol title="Services" links={services.slice(0, 6).map((s) => ({ href: `/services/${s.slug}`, label: s.name }))} />
+        {groups.map((g) => (
+          <FooterCol key={g.category} title={g.label} links={g.services.map((s) => ({ href: `/services/${s.slug}`, label: s.name }))} />
+        ))}
         <FooterCol
           title="Studio"
           links={[

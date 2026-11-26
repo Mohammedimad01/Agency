@@ -9,7 +9,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2">
         Skip to content
       </a>
-      <SiteHeader />
+      <SiteHeader services={services.map((s) => ({ slug: s.slug, name: s.name, summary: s.summary, icon: s.icon, category: s.category }))} />
       <main id="main" className="flex-1">
         {children}
       </main>

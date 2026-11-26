@@ -26,18 +26,18 @@ declare
   pr_acme uuid; pr_globex uuid; inv1 uuid; inv2 uuid; inv3 uuid; d1 uuid; f1 uuid;
   s_web uuid; s_bi uuid; s_brand uuid; s_ai uuid; conv uuid;
 begin
-  u_owner  := pg_temp.seed_user('owner@bismillah.dev',   'Amina Rahman');
-  u_pm     := pg_temp.seed_user('pm@bismillah.dev',      'Yusuf Khan');
-  u_dev    := pg_temp.seed_user('dev@bismillah.dev',     'Omar Farooq');
-  u_design := pg_temp.seed_user('design@bismillah.dev',  'Layla Hassan');
-  u_fin    := pg_temp.seed_user('finance@bismillah.dev', 'Sara Malik');
+  u_owner  := pg_temp.seed_user('erlyst.tech@gmail.com',   'Amina Rahman');
+  u_pm     := pg_temp.seed_user('pm@erlyst.dev',      'Yusuf Khan');
+  u_dev    := pg_temp.seed_user('dev@erlyst.dev',     'Omar Farooq');
+  u_design := pg_temp.seed_user('design@erlyst.dev',  'Layla Hassan');
+  u_fin    := pg_temp.seed_user('finance@erlyst.dev', 'Sara Malik');
   u_acme   := pg_temp.seed_user('client@acme.test',      'John Carter');
   u_globex := pg_temp.seed_user('client@globex.test',    'Priya Nair');
 
-  v_org := public.bootstrap_organization(u_owner, 'Bismillah', 'bismillah', 'USD', 'Asia/Dubai');
-  update public.settings set default_tax_rate_bps = 500, company_email = 'hello@bismillah.dev',
+  v_org := public.bootstrap_organization(u_owner, 'Erlyst', 'erlyst', 'USD', 'Asia/Dubai');
+  update public.settings set default_tax_rate_bps = 500, company_email = 'erlyst.tech@gmail.com',
     company_phone = '+971 50 000 0000', company_address = 'Dubai, United Arab Emirates',
-    payment_instructions = E'Bank: Example Bank\nAccount name: Bismillah Studio\nIBAN: AE00 0000 0000 0000 0000 000\nReference: your invoice number'
+    payment_instructions = E'Bank: Example Bank\nAccount name: Erlyst\nIBAN: AE00 0000 0000 0000 0000 000\nReference: your invoice number'
   where organization_id = v_org;
 
   insert into public.team_members (organization_id, profile_id, role_key, status, joined_at, title, invited_by) values
@@ -49,11 +49,13 @@ begin
   select id into s_web from public.services where organization_id = v_org and slug = 'website-development';
   select id into s_bi from public.services where organization_id = v_org and slug = 'power-bi';
   select id into s_brand from public.services where organization_id = v_org and slug = 'branding';
-  select id into s_ai from public.services where organization_id = v_org and slug = 'ai-solutions';
+  select id into s_ai from public.services where organization_id = v_org and slug = 'ai-automation';
   update public.services set starting_price_cents = v.p from (values
-    ('website-development', 450000), ('web-applications', 1200000), ('ui-ux-design', 300000), ('branding', 250000),
-    ('business-intelligence', 400000), ('power-bi', 280000), ('ai-solutions', 600000), ('automation-integrations', 220000),
-    ('custom-software', 1500000)) v(slug, p)
+    ('website-development', 250000), ('web-design', 150000), ('ecommerce', 450000), ('ui-ux-design', 200000),
+    ('custom-web-apps', 900000), ('mobile-apps', 1200000), ('business-software', 1500000), ('invoicing-apps', 350000),
+    ('quotation-apps', 350000), ('erp-software', 2500000), ('seo-services', 80000), ('google-search-console', 30000),
+    ('technical-seo', 120000), ('ai-search-optimization', 100000), ('local-seo', 60000), ('digital-marketing', 100000),
+    ('ai-automation', 300000), ('power-bi', 280000), ('branding', 250000), ('website-maintenance', 25000), ('hosting-infrastructure', 15000)) v(slug, p)
   where services.slug = v.slug and services.organization_id = v_org;
   select id into tpl_web from public.project_templates where organization_id = v_org and name = 'Website Development';
   select id into tpl_bi from public.project_templates where organization_id = v_org and name = 'Power BI Dashboard';
@@ -79,19 +81,19 @@ begin
                             budget_cents, budget_range, timeline, description, assigned_to, qualification_score, priority, status, follow_up_at, created_at)
   values
     (v_org, 'Daniel Okafor', 'Brightpath Health', 'daniel@brightpath.test', '+44 20 0000 0001', 'Healthcare', 'United Kingdom', 'website', s_ai,
-     'AI-Powered Business Solutions', 1500000, '$10k–$25k', '1–3 months', 'Patient intake assistant that summarises forms for clinicians.', u_owner, 82, 'high', 'qualified', now() + interval '1 day', now() - interval '6 days'),
+     'AI automation', 1500000, '$10k–$25k', '1–3 months', 'Patient intake assistant that summarises forms for clinicians.', u_owner, 82, 'high', 'qualified', now() + interval '1 day', now() - interval '6 days'),
     (v_org, 'Mei Tanaka', 'Kumo Coffee', 'mei@kumo.test', null, 'Hospitality', 'Japan', 'instagram', s_brand,
-     'Branding & Creative', 400000, '$2.5k–$5k', 'Flexible', 'Rebrand for our second location opening in spring.', u_design, 64, 'medium', 'discovery', now() - interval '2 hours', now() - interval '12 days'),
+     'Branding', 400000, '$2.5k–$5k', 'Flexible', 'Rebrand for our second location opening in spring.', u_design, 64, 'medium', 'discovery', now() - interval '2 hours', now() - interval '12 days'),
     (v_org, 'Carlos Mendes', 'Mendes Construction', 'carlos@mendes.test', '+55 11 0000 0000', 'Construction', 'Brazil', 'referral', s_bi,
-     'Power BI Dashboards & Reporting', 800000, '$5k–$10k', 'Within a month', 'Project cost tracking across 14 sites.', u_pm, 71, 'medium', 'proposal_sent', now() + interval '3 days', now() - interval '20 days'),
+     'Power BI & analytics', 800000, '$5k–$10k', 'Within a month', 'Project cost tracking across 14 sites.', u_pm, 71, 'medium', 'proposal_sent', now() + interval '3 days', now() - interval '20 days'),
     (v_org, 'Hannah Schmidt', null, 'hannah@schmidt.test', null, 'Education', 'Germany', 'website', s_web,
-     'Website Development', 150000, 'Under $2.5k', 'ASAP', 'Simple website for my tutoring business.', null, 38, 'low', 'new', null, now() - interval '1 day'),
+     'Web development', 150000, 'Under $2.5k', 'ASAP', 'Simple website for my tutoring business.', null, 38, 'low', 'new', null, now() - interval '1 day'),
     (v_org, 'Ibrahim Saleh', 'Saleh Trading', 'ibrahim@saleh.test', '+971 4 000 0000', 'Trade', 'United Arab Emirates', 'linkedin', s_web,
-     'Website Development', 600000, '$5k–$10k', '1–3 months', 'B2B catalogue site with quote requests.', u_pm, 75, 'high', 'negotiation', now() + interval '5 hours', now() - interval '30 days'),
+     'Web development', 600000, '$5k–$10k', '1–3 months', 'B2B catalogue site with quote requests.', u_pm, 75, 'high', 'negotiation', now() + interval '5 hours', now() - interval '30 days'),
     (v_org, 'Grace Liu', 'Northwind Labs', 'grace@northwind.test', null, 'SaaS', 'Singapore', 'website', null,
-     'Workflow Automation & Integrations', null, 'Not sure yet', 'Flexible', 'Exploring options.', null, 22, 'low', 'not_qualified', null, now() - interval '40 days'),
+     'AI automation', null, 'Not sure yet', 'Flexible', 'Exploring options.', null, 22, 'low', 'not_qualified', null, now() - interval '40 days'),
     (v_org, 'John Carter', 'Acme Logistics', 'client@acme.test', '+1 555 0100', 'Logistics', 'United States', 'referral', s_web,
-     'Website Development', 900000, '$5k–$10k', '1–3 months', 'New corporate website with a shipment tracking widget.', u_pm, 88, 'high', 'won', null, now() - interval '75 days');
+     'Web development', 900000, '$5k–$10k', '1–3 months', 'New corporate website with a shipment tracking widget.', u_pm, 88, 'high', 'won', null, now() - interval '75 days');
   update public.leads set converted_client_id = c_acme, converted_at = now() - interval '60 days' where email = 'client@acme.test' and organization_id = v_org;
 
   -- Proposals ----------------------------------------------------------------
@@ -212,19 +214,19 @@ begin
      'Customers called support for every shipment update.', 'A self-service portal with live tracking and proactive alerts.',
      'Support volume dropped and NPS rose within one quarter.',
      '[{"label":"Fewer support tickets","value":"-34%"},{"label":"NPS","value":"+21"}]',
-     array['Web Application Development','UI/UX Design'], array['Next.js','PostgreSQL','Mapbox'], true, true, 1),
+     array['Custom web apps','UI/UX design'], array['Next.js','PostgreSQL','Mapbox'], true, true, 1),
     (v_org, 'retail-bi-suite', 'Retail performance intelligence', 'Demo: Retail group', 'Retail', 2025,
      'Executive dashboards unifying POS, inventory and staffing data.',
      'Leadership waited two weeks for monthly reports.', 'A governed Power BI model with daily refresh and store-level drilldowns.',
      'Reporting time went from weeks to minutes.',
      '[{"label":"Reporting time","value":"-95%"},{"label":"Stores covered","value":"40"}]',
-     array['Power BI Dashboards & Reporting','Business Intelligence & Analytics'], array['Power BI','Azure SQL','dbt'], true, true, 2),
+     array['Power BI & analytics'], array['Power BI','Azure SQL','dbt'], true, true, 2),
     (v_org, 'clinic-ai-intake', 'AI patient intake assistant', 'Demo: Clinic network', 'Healthcare', 2026,
      'Document intelligence that summarises intake forms for clinicians.',
      'Clinicians spent 10 minutes per patient reading forms.', 'An LLM-powered summariser with human review and audit trails.',
      'Saved over 300 clinician hours per month.',
      '[{"label":"Hours saved / month","value":"300+"},{"label":"Accuracy (reviewed)","value":"98%"}]',
-     array['AI-Powered Business Solutions'], array['Python','PostgreSQL','LLM APIs'], true, true, 3);
+     array['AI automation'], array['Python','PostgreSQL','LLM APIs'], true, true, 3);
 
   insert into public.testimonials (organization_id, author_name, author_title, company, quote, rating, is_published, sort_order) values
     (v_org, 'Demo Client', 'Operations Director', 'Demo Logistics Co.', 'They understood our operations faster than any agency we have worked with, and the portal kept everyone aligned.', 5, true, 1),

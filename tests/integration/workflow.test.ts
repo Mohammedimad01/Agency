@@ -17,9 +17,9 @@ describe.skipIf(!live)("agency workflow, end to end", () => {
   let orgId: string, leadId: string, clientId: string, proposalId: string, projectId: string, deliverableId: string, invoiceId: string, devId: string;
 
   beforeAll(async () => {
-    [owner, pm, finance] = await Promise.all([signIn("owner@bismillah.dev"), signIn("pm@bismillah.dev"), signIn("finance@bismillah.dev")]);
+    [owner, pm, finance] = await Promise.all([signIn("erlyst.tech@gmail.com"), signIn("pm@erlyst.dev"), signIn("finance@erlyst.dev")]);
     orgId = (await admin().from("organizations").select("id").single()).data!.id;
-    devId = (await admin().from("profiles").select("id").eq("email", "dev@bismillah.dev").single()).data!.id;
+    devId = (await admin().from("profiles").select("id").eq("email", "dev@erlyst.dev").single()).data!.id;
   });
 
   it("1. a website inquiry creates a lead and notifies the team (workflows #1–#2)", async () => {
@@ -117,7 +117,7 @@ describe.skipIf(!live)("agency workflow, end to end", () => {
   it("6. teammates are assigned and the client gets portal access to the project", async () => {
     const add = await owner.from("project_members").insert({ project_id: projectId, profile_id: devId });
     expect(add.error).toBeNull();
-    const dev = await signIn("dev@bismillah.dev");
+    const dev = await signIn("dev@erlyst.dev");
     expect((await dev.from("projects").select("id").eq("id", projectId)).data!.length).toBe(1);
     expect((await dev.from("project_finances").select("project_id").eq("project_id", projectId)).data).toEqual([]);
     expect((await dev.from("notifications").select("type").eq("entity_id", projectId).eq("type", "project_assigned")).data!.length).toBeGreaterThan(0);

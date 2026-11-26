@@ -6,23 +6,28 @@
 const env = (key: string, fallback: string) => process.env[key] || fallback;
 
 export const siteConfig = {
-  name: env("NEXT_PUBLIC_AGENCY_NAME", "Bismillah"),
-  shortName: env("NEXT_PUBLIC_AGENCY_SHORT_NAME", "Bismillah"),
-  tagline: env("NEXT_PUBLIC_AGENCY_TAGLINE", "Digital products, data and AI — built with care."),
+  name: env("NEXT_PUBLIC_AGENCY_NAME", "Erlyst"),
+  shortName: env("NEXT_PUBLIC_AGENCY_SHORT_NAME", "Erlyst"),
+  tagline: env("NEXT_PUBLIC_AGENCY_TAGLINE", "Websites, software & SEO — built to grow."),
   description: env(
     "NEXT_PUBLIC_AGENCY_DESCRIPTION",
-    "A digital solutions studio crafting websites, web applications, brands, business intelligence and AI-powered systems for ambitious teams.",
+    "Erlyst is a digital studio that designs and builds fast websites, custom apps and business software, and grows them with SEO, AI search optimisation and digital marketing.",
   ),
   url: env("NEXT_PUBLIC_APP_URL", "http://localhost:3000"),
   /** Logo: a path under /public. When empty, the wordmark is rendered from `name`. */
-  logo: { src: env("NEXT_PUBLIC_AGENCY_LOGO", ""), mark: env("NEXT_PUBLIC_AGENCY_MARK", "B") },
+  logo: {
+    src: env("NEXT_PUBLIC_AGENCY_LOGO", ""),
+    mark: env("NEXT_PUBLIC_AGENCY_MARK", "E"),
+    /** Small line under the wordmark in the site header. */
+    subline: env("NEXT_PUBLIC_AGENCY_SUBLINE", "Web · Apps · SEO"),
+  },
   /** Brand colours (any CSS colour). Applied as CSS variables in the root layout. */
   colors: {
     brand: env("NEXT_PUBLIC_BRAND_COLOR", "oklch(0.46 0.085 165)"),
     brandForeground: env("NEXT_PUBLIC_BRAND_FOREGROUND", "oklch(0.985 0 0)"),
   },
   contact: {
-    email: env("NEXT_PUBLIC_CONTACT_EMAIL", "hello@bismillah.studio"),
+    email: env("NEXT_PUBLIC_CONTACT_EMAIL", "erlyst.tech@gmail.com"),
     phone: env("NEXT_PUBLIC_CONTACT_PHONE", "+971 50 000 0000"),
     address: env("NEXT_PUBLIC_CONTACT_ADDRESS", "Dubai, United Arab Emirates"),
     hours: env("NEXT_PUBLIC_CONTACT_HOURS", "Sun–Thu, 9:00–18:00 GST"),
@@ -43,15 +48,20 @@ export const siteConfig = {
   organizationSlug: env("NEXT_PUBLIC_ORGANIZATION_SLUG", ""),
   seo: {
     keywords: [
-      "digital agency",
-      "web development",
-      "web applications",
-      "UI/UX design",
-      "branding",
-      "Power BI",
-      "business intelligence",
-      "AI solutions",
-      "automation",
+      "web development agency",
+      "web design",
+      "e-commerce development",
+      "custom web apps",
+      "mobile app development",
+      "ERP software",
+      "invoicing software",
+      "SEO services",
+      "technical SEO",
+      "local SEO",
+      "AI search optimization",
+      "GEO",
+      "AEO",
+      "digital marketing",
     ],
     twitterHandle: env("NEXT_PUBLIC_TWITTER_HANDLE", ""),
   },

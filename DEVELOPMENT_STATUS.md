@@ -1,6 +1,9 @@
 # Development status
 
-_Last updated: 2026-11-23_
+_Last updated: 2026-11-26_
+
+## Changelog
+- **2026-11-26** — Rebranded to **Erlyst** (tagline "Websites, software & SEO — built to grow.", header subline "Web · Apps · SEO", contact/owner email erlyst.tech@gmail.com). New service catalogue (21 services in four groups) with a header mega-menu, grouped services on the homepage and `/services`, related services on each service page, grouped footer, rewritten homepage copy and SEO keywords. Demo team accounts moved to `@erlyst.dev`. All tests, lint and build re-verified.
 
 ## Summary
 All eight phases of the brief are implemented and verified end to end on a local Supabase stack. The platform is usable today: the public site captures leads, the admin runs sales/delivery/finance, clients work in their portal, and the automation engine connects them.

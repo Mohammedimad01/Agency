@@ -26,8 +26,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [service, portfolio] = await Promise.all([getPublicService(slug), getPortfolio()]);
+  const [service, portfolio, all] = await Promise.all([getPublicService(slug), getPortfolio(), getPublicServices()]);
   if (!service) notFound();
+  const siblings = all.filter((s) => s.category === service.category && s.slug !== service.slug).slice(0, 6);
   const related = portfolio.filter((p) => p.services.includes(service.name)).slice(0, 2);
 
   return (
@@ -72,6 +73,22 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <WorkCover item={p} className="aspect-[16/10]" />
                 <p className="mt-4 text-[17px] font-medium group-hover:text-primary">{p.title}</p>
                 <p className="text-sm text-muted-foreground">{p.summary}</p>
+              </Link>
+            ))}
+          </div>
+        </Section>
+      ) : null}
+      {siblings.length ? (
+        <Section>
+          <h2 className="mb-6 font-display text-[clamp(1.8rem,3vw,2.4rem)] tracking-tight">More in {service.category}</h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {siblings.map((s) => (
+              <Link key={s.id} href={`/services/${s.slug}`} className="group flex items-start gap-3 rounded-xl border p-4 transition-colors hover:border-foreground/20">
+                <ServiceIcon name={s.icon} className="mt-0.5 size-5 shrink-0 text-primary" />
+                <span>
+                  <span className="block font-medium group-hover:text-primary">{s.name}</span>
+                  <span className="block text-[13px] text-muted-foreground">{s.summary}</span>
+                </span>
               </Link>
             ))}
           </div>

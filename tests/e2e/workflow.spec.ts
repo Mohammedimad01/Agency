@@ -11,7 +11,7 @@ test.describe("public website → CRM", () => {
     await page.getByLabel("Full name").fill(name);
     await page.getByLabel("Work email").fill(`e2e-${Date.now()}@example.test`);
     await page.getByLabel("Company", { exact: true }).fill("E2E Industries");
-    await page.getByLabel("Service").selectOption({ label: "Website Development" });
+    await page.getByLabel("Service").selectOption({ label: "Web development" });
     await page.getByLabel("Budget").selectOption({ label: "$5k–$10k" });
     await page.getByLabel("Timeline").selectOption("1–3 months");
     await page.getByLabel("Project requirements").fill("A marketing website with a CMS and a blog.");
@@ -20,7 +20,7 @@ test.describe("public website → CRM", () => {
     await page.getByRole("button", { name: "Send project brief" }).click();
     await expect(page.getByText("Message received.")).toBeVisible();
 
-    await login(page, "owner@bismillah.dev");
+    await login(page, "erlyst.tech@gmail.com");
     await page.goto("/admin/leads?view=table");
     await page.getByPlaceholder("Search leads…").fill(name);
     await page.getByText(name).click();
@@ -44,7 +44,7 @@ test.describe("authorization", () => {
   });
 
   test("a developer cannot open finance pages", async ({ page }) => {
-    await login(page, "dev@bismillah.dev");
+    await login(page, "dev@erlyst.dev");
     await page.goto("/admin/finance/invoices");
     await expect(page).toHaveURL(/access-denied/);
     await expect(page.getByRole("navigation", { name: "Admin" }).getByText("Invoices")).toHaveCount(0);
@@ -83,7 +83,7 @@ test.describe("client portal", () => {
 
 test.describe("operations", () => {
   test("finance creates an invoice with live totals, issues it and records a payment", async ({ page }) => {
-    await login(page, "finance@bismillah.dev");
+    await login(page, "finance@erlyst.dev");
     await page.goto("/admin/finance/invoices/new");
     await page.getByLabel("Client").selectOption({ label: "Nadia Studio" });
     await page.getByLabel("Description").first().fill("Brand photography retouching");
@@ -105,7 +105,7 @@ test.describe("operations", () => {
   });
 
   test("a project manager creates a project from a template", async ({ page }) => {
-    await login(page, "pm@bismillah.dev");
+    await login(page, "pm@erlyst.dev");
     await page.goto("/admin/projects/new");
     await page.getByLabel("Project name").fill(`E2E Website ${Date.now()}`);
     await page.getByLabel("Client").selectOption({ label: "Nadia Studio" });

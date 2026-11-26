@@ -9,7 +9,7 @@ describe.skipIf(!live)("Row Level Security & client isolation", () => {
 
   beforeAll(async () => {
     [owner, dev, finance, acme, globex] = await Promise.all([
-      signIn("owner@bismillah.dev"), signIn("dev@bismillah.dev"), signIn("finance@bismillah.dev"), signIn("client@acme.test"), signIn("client@globex.test"),
+      signIn("erlyst.tech@gmail.com"), signIn("dev@erlyst.dev"), signIn("finance@erlyst.dev"), signIn("client@acme.test"), signIn("client@globex.test"),
     ]);
     const a = admin();
     acmeClientId = (await a.from("clients").select("id").eq("name", "Acme Logistics").single()).data!.id;
@@ -92,7 +92,7 @@ describe.skipIf(!live)("Row Level Security & client isolation", () => {
   });
 
   it("non-owners cannot grant the owner role and the last owner cannot be removed", async () => {
-    const pm = await signIn("pm@bismillah.dev");
+    const pm = await signIn("pm@erlyst.dev");
     const tm = (await admin().from("team_members").select("id, profile_id").eq("role_key", "developer").single()).data!;
     // PM lacks team.manage entirely → no rows updated
     expect((await pm.from("team_members").update({ role_key: "owner" }).eq("id", tm.id).select("id")).data ?? []).toEqual([]);

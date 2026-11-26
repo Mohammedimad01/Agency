@@ -7,18 +7,19 @@ import { ServiceIcon } from "@/components/shared/icon";
 import { portfolioMetrics, type Faq, type PortfolioItem, type PublicService, type Testimonial } from "@/features/website/queries";
 import { formatMoney } from "@/lib/format";
 import { siteConfig } from "@/config/site";
+import { groupServices } from "@/features/website/service-groups";
 
 export function Hero({ services }: { services: PublicService[] }) {
   return (
     <section className="relative overflow-hidden border-b">
       <div className="container-page pb-20 pt-16 sm:pb-28 sm:pt-28">
-        <p className="animate-fade-up font-mono text-[12px] uppercase tracking-[0.14em] text-muted-foreground">Digital solutions studio</p>
+        <p className="animate-fade-up font-mono text-[12px] uppercase tracking-[0.14em] text-muted-foreground">{siteConfig.tagline}</p>
         <h1 className="mt-6 max-w-5xl animate-fade-up font-display text-[clamp(2.8rem,7.4vw,6rem)] leading-[0.98] tracking-tight text-balance [animation-delay:80ms]">
-          We design and build the <em className="text-primary">systems</em> ambitious businesses run on.
+          Websites, apps and search visibility that <em className="text-primary">grow</em> your business.
         </h1>
         <div className="mt-10 grid animate-fade-up gap-8 [animation-delay:160ms] md:grid-cols-[1.2fr_1fr] md:items-end">
           <p className="max-w-xl text-[17px] leading-relaxed text-muted-foreground">
-            Websites, web applications, brands, dashboards and AI-powered workflows — scoped clearly, delivered in milestones you can see, and engineered to keep working long after launch.
+            {siteConfig.name} designs and builds fast websites, online stores, custom apps and business software — then helps customers find you on Google, in maps and in AI answers. Clear scope, visible milestones, no surprises.
           </p>
           <div className="flex flex-wrap gap-3 md:justify-end">
             <Button size="lg" asChild>
@@ -32,15 +33,18 @@ export function Hero({ services }: { services: PublicService[] }) {
           </div>
         </div>
         {services.length ? (
-          <ul className="mt-16 flex flex-wrap gap-x-6 gap-y-2 border-t pt-6 text-[13.5px] text-muted-foreground">
-            {services.map((s) => (
-              <li key={s.id}>
-                <Link href={`/services/${s.slug}`} className="hover:text-foreground">
-                  {s.name}
-                </Link>
-              </li>
+          <dl className="mt-16 grid gap-6 border-t pt-8 sm:grid-cols-3">
+            {[
+              { k: "Websites", v: "Business sites & e-commerce" },
+              { k: "Custom apps & software", v: "Portals, mobile, invoicing & ERP" },
+              { k: "SEO & growth", v: "Google, local & AI search" },
+            ].map((x) => (
+              <div key={x.k}>
+                <dt className="text-[13px] font-medium">{x.k}</dt>
+                <dd className="mt-1 text-[13.5px] text-muted-foreground">{x.v}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         ) : null}
       </div>
     </section>
@@ -52,11 +56,11 @@ export function Intro() {
     <Section>
       <div className="grid gap-10 md:grid-cols-[1fr_1fr]">
         <p className="font-display text-[clamp(1.8rem,3.4vw,2.6rem)] leading-[1.15] tracking-tight text-balance">
-          A small, senior team that treats your business problem as the brief — not the deliverable list.
+          A small, senior team that builds what you need — then makes sure people can find it.
         </p>
         <div className="space-y-5 text-[15.5px] leading-relaxed text-muted-foreground">
           <p>
-            {siteConfig.name} brings design, engineering and data under one roof. That means the dashboard knows about the database, the brand knows about the product, and the website knows how your sales team actually works.
+            {siteConfig.name} brings design, engineering and search growth under one roof. Your website is built SEO-ready from the first line of code, your software fits the way your team works, and every project is measured against real business results.
           </p>
           <p>
             Every engagement comes with a private client portal: live progress, deliverables to approve, invoices and a direct line to the people doing the work.
@@ -94,14 +98,71 @@ export function ServicesIndex({ services, showPrices }: { services: PublicServic
   );
 }
 
+export function ServiceGroups({ services }: { services: PublicService[] }) {
+  const { groups, more } = groupServices(services);
+  return (
+    <div className="grid gap-12">
+      <div className="grid gap-px overflow-hidden rounded-xl border bg-border lg:grid-cols-3">
+        {groups.map((g) => (
+          <div key={g.category} className="flex flex-col bg-background p-6 sm:p-7">
+            <div className="flex items-center gap-2.5">
+              <span className="flex size-8 items-center justify-center rounded-md bg-primary/10">
+                <ServiceIcon name={g.icon} className="size-4 text-primary" />
+              </span>
+              <h3 className="text-[17px] font-medium tracking-tight">{g.label}</h3>
+            </div>
+            <p className="mt-3 text-[14px] text-muted-foreground">{g.blurb}</p>
+            <ul className="mt-6 grid gap-1">
+              {g.services.map((sv) => (
+                <li key={sv.id}>
+                  <Link href={`/services/${sv.slug}`} className="group -mx-2 flex items-start justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-accent">
+                    <span>
+                      <span className="block text-[15px] font-medium group-hover:text-primary">{sv.name}</span>
+                      {sv.summary ? <span className="block text-[13px] text-muted-foreground">{sv.summary}</span> : null}
+                    </span>
+                    <ArrowUpRight className="mt-1 size-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      {more.length ? (
+        <div>
+          <p className="mb-4 font-mono text-[12px] uppercase tracking-[0.14em] text-muted-foreground">Also available</p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {more.map((sv) => (
+              <Link key={sv.id} href={`/services/${sv.slug}`} className="group flex items-start gap-3 rounded-xl border bg-background p-4 transition-colors hover:border-foreground/20">
+                <ServiceIcon name={sv.icon} className="mt-0.5 size-5 shrink-0 text-primary" />
+                <span>
+                  <span className="block text-[15px] font-medium group-hover:text-primary">{sv.name}</span>
+                  {sv.summary ? <span className="block text-[13px] text-muted-foreground">{sv.summary}</span> : null}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function ServicesOverview({ services }: { services: PublicService[] }) {
   if (!services.length) return null;
   return (
     <Section tone="muted" id="services">
-      <SectionIntro label="Services" title="One studio for the whole digital stack.">
-        From the first sketch to the reporting layer, we cover the disciplines that usually require three vendors and a project manager to translate between them.
+      <SectionIntro label="Services" title="Build it, launch it, get it found.">
+        Websites, custom software and search growth from one team — so what we build is fast, usable and visible from day one.
       </SectionIntro>
-      <ServicesIndex services={services} />
+      <ServiceGroups services={services} />
+      <div className="mt-10">
+        <Button variant="outline" asChild>
+          <Link href="/services">
+            Explore all services <ArrowRight />
+          </Link>
+        </Button>
+      </div>
     </Section>
   );
 }
@@ -171,10 +232,10 @@ export function Process() {
 }
 
 const STACK = [
-  { group: "Product & web", items: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Figma"] },
-  { group: "Backend & data", items: ["PostgreSQL", "Supabase", "Node.js", "Python", "REST & GraphQL"] },
-  { group: "Analytics", items: ["Power BI", "SQL", "dbt", "Azure", "Looker Studio"] },
-  { group: "AI & automation", items: ["LLM APIs", "RAG pipelines", "Webhooks", "Edge functions", "Scheduled jobs"] },
+  { group: "Websites & stores", items: ["Next.js", "React", "Shopify", "WordPress", "Figma"] },
+  { group: "Apps & software", items: ["TypeScript", "React Native", "Node.js", "PostgreSQL", "Supabase"] },
+  { group: "SEO & growth", items: ["Google Search Console", "Google Analytics 4", "Schema.org", "Google Business Profile", "Google & Meta Ads"] },
+  { group: "AI & infrastructure", items: ["LLM APIs", "Workflow automation", "Vercel", "Cloudflare", "AWS"] },
 ];
 
 export function TechStack() {
@@ -236,7 +297,7 @@ export function Testimonials({ items }: { items: Testimonial[] }) {
 const REASONS = [
   { title: "Senior people, start to finish", body: "The people who scope your project are the people who build it." },
   { title: "Fixed scope, clear milestones", body: "You approve each milestone before we move on. No surprise invoices." },
-  { title: "Design + engineering + data", body: "One team across disciplines means fewer hand-offs and fewer gaps." },
+  { title: "Built to rank from day one", body: "Speed, schema and clean structure are part of every build — not an add-on later." },
   { title: "Your own client portal", body: "Progress, files, approvals and invoices in one secure place." },
   { title: "Built to be maintained", body: "Documented, tested code on mainstream technology that you own." },
   { title: "Long-term partnership", body: "Support plans and continuous improvement after launch." },
