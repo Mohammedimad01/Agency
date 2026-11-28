@@ -17,6 +17,9 @@ A complete operating system for a digital agency, in one Next.js + Supabase code
 | First-time setup (empty database only) | `/setup` — creates the agency and the owner account, then disappears | `/admin` after email verification |
 | Forgot password | `/forgot-password` | `/reset-password` via emailed link |
 
+## Launching the website before the backend
+The public site works with **no Supabase configured**: set only `NEXT_PUBLIC_APP_URL` on Vercel and deploy. Forms then open a pre-filled email to the agency address. Details in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#0-frontend-only-launch-no-backend-yet). Contact details (phone, WhatsApp, address, socials) live in [`src/config/site.ts`](src/config/site.ts); fallback services, FAQs and package prices in [`src/config/content.ts`](src/config/content.ts).
+
 ## Stack
 
 Next.js 16 (App Router, TypeScript strict) · React 19 · Tailwind CSS 4 · shadcn-style components on Radix · React Hook Form + Zod · Supabase (Postgres, Auth, Storage, Realtime, Cron) · Recharts · TanStack Table · date-fns · Resend · @react-pdf/renderer · Vitest · Playwright.

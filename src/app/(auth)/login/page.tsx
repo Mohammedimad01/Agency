@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/forms";
 import { getUser, homePathFor } from "@/lib/auth/session";
 import { isSetupComplete } from "@/features/auth/actions";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = { title: "Sign in", robots: { index: false } };
 
@@ -14,6 +15,20 @@ const ERRORS: Record<string, string> = {
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const { next, error } = await searchParams;
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return (
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Client portal</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Sign-in isn&apos;t available yet. If you&apos;re a client and need a file, invoice or update, email us at{" "}
+          <a href={`mailto:${siteConfig.contact.email}`} className="font-medium text-primary hover:underline">
+            {siteConfig.contact.email}
+          </a>
+          .
+        </p>
+      </div>
+    );
+  }
   const user = await getUser();
   if (user && !error) redirect(await homePathFor());
   const setupDone = await isSetupComplete();

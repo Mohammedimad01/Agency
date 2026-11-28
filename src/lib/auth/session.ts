@@ -36,6 +36,7 @@ export interface ClientContext {
 
 /** Verified user (validated with the Auth server, not just the cookie). */
 export const getUser = cache(async () => {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return null;
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user) return null;

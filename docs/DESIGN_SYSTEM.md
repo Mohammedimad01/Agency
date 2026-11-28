@@ -10,8 +10,14 @@ Minimal, premium, calm. Generous whitespace, subtle borders instead of heavy sha
 - **Radius**: 8px base (`--radius`), with sm/md/lg/xl steps.
 - **Dark mode**: full token set under `.dark` (toggle in the admin header; light is the default).
 
+## Public website identity
+- **Colours**: `--ink` (near-black green) for dark sections, header CTA and footer; `--signal` (lime) for the primary public CTA and accent words on dark; `--paper` for warm off-white panels. Utilities: `bg-ink`, `text-ink-foreground`, `text-signal`, `bg-paper`.
+- **Type**: Bricolage Grotesque (`.font-display`, weight 600, tight tracking) for headlines; a single Instrument Serif italic word (`font-serif italic`) as an accent per headline.
+- **Imagery**: code-built product examples in `components/public/visuals.tsx` (browser, invoice, search result, traffic, AI answer), always labelled "Example". No stock photos, no invented client logos or metrics.
+- **Sections**: `Section`, `SectionIntro`, `Eyebrow` (numbered mono label) and `PageHero` in `components/public/section.tsx`; `tone="dark"` gives a rounded ink panel.
+
 ## Typography
-Geist (UI), Geist Mono (labels, numbers in eyebrows) and Instrument Serif (public headlines, portal greeting). Tabular numerals (`.tabular`) for all money and counts.
+Geist (UI), Geist Mono (labels, numbers in eyebrows), Bricolage Grotesque (public display headlines) and Instrument Serif (italic accents, portal greeting). Tabular numerals (`.tabular`) for all money and counts.
 
 ## Components
 Primitives (`components/ui`): Button, Input, Textarea, Label, Select, Checkbox, Switch, Badge, Card, Dialog, AlertDialog, Sheet, DropdownMenu, Popover, Tooltip, Tabs, Table, Progress, Skeleton, Avatar, Command, Toaster.

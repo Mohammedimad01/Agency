@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Set up your workspace", robots: { in
 export const dynamic = "force-dynamic";
 
 export default async function SetupPage() {
-  if (await isSetupComplete()) notFound();
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY || (await isSetupComplete())) notFound();
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-tight">Set up your workspace</h1>

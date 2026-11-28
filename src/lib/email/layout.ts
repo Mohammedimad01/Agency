@@ -47,7 +47,7 @@ ${parts.paragraphs.map((p) => `<p style="margin:0 0 12px;font-size:14.5px;line-h
 ${details}${cta}
 ${parts.footnote ? `<p style="margin:20px 0 0;font-size:12.5px;line-height:1.5;color:#8a8a94">${parts.footnote}</p>` : ""}
 </td></tr></table>
-<p style="font-size:12px;color:#8a8a94;margin:16px 0 0">${esc(siteConfig.name)} · ${esc(siteConfig.contact.address)} · <a href="mailto:${esc(siteConfig.contact.email)}" style="color:#8a8a94">${esc(siteConfig.contact.email)}</a></p>
+<p style="font-size:12px;color:#8a8a94;margin:16px 0 0">${esc(siteConfig.name)}${siteConfig.contact.address ? ` · ${esc(siteConfig.contact.address)}` : ""} · <a href="mailto:${esc(siteConfig.contact.email)}" style="color:#8a8a94">${esc(siteConfig.contact.email)}</a></p>
 </td></tr></table></body></html>`;
 
   const strip = (s: string) => s.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'");

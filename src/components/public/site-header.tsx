@@ -54,7 +54,7 @@ export function SiteHeader({ services }: { services: NavService[] }) {
   const servicesActive = pathname.startsWith("/services");
 
   return (
-    <header className={cn("sticky top-0 z-40 border-b bg-background/90 backdrop-blur transition-colors", scrolled || megaOpen ? "border-border" : "border-transparent")}>
+    <header className={cn("sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md transition-colors", scrolled || megaOpen ? "border-border" : "border-transparent")}>
       <div className="container-page flex h-16 items-center justify-between gap-6">
         <Logo subline />
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
@@ -66,7 +66,7 @@ export function SiteHeader({ services }: { services: NavService[] }) {
               onClick={() => (megaOpen ? setMegaOn(null) : openMega())}
               className={cn(
                 "flex items-center gap-1 rounded-md px-3 py-2 text-[14px] text-muted-foreground transition-colors hover:text-foreground",
-                (megaOpen || servicesActive) && "bg-primary/[0.07] text-primary",
+                (megaOpen || servicesActive) && "bg-accent text-foreground",
               )}
             >
               Services
@@ -74,7 +74,7 @@ export function SiteHeader({ services }: { services: NavService[] }) {
             </button>
             {megaOpen ? (
               <div id="services-menu" className="fixed inset-x-0 top-16 z-50 px-4 sm:px-8">
-                <div className="mx-auto max-w-6xl animate-in rounded-2xl border bg-popover p-6 shadow-xl fade-in-0 slide-in-from-top-1 duration-150 sm:p-8">
+                <div className="mx-auto max-w-6xl animate-in rounded-[22px] border bg-popover p-6 shadow-2xl shadow-black/10 fade-in-0 slide-in-from-top-1 duration-150 sm:p-8">
                   <div className="grid gap-8 md:grid-cols-3">
                     {groups.map((g) => (
                       <div key={g.category}>
@@ -127,8 +127,10 @@ export function SiteHeader({ services }: { services: NavService[] }) {
           <Button variant="ghost" size="sm" asChild>
             <Link href="/login">Client login</Link>
           </Button>
-          <Button size="sm" asChild>
-            <Link href="/book-a-call">Book a call</Link>
+          <Button size="sm" asChild className="rounded-full bg-ink px-4 text-ink-foreground hover:bg-ink/90">
+            <Link href="/contact?type=brief">
+              Get a quote <ArrowRight />
+            </Link>
           </Button>
         </div>
         <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOn(mobileOpen ? null : pathname)} aria-expanded={mobileOpen} aria-label="Toggle menu">
@@ -176,8 +178,8 @@ export function SiteHeader({ services }: { services: NavService[] }) {
               <Button variant="outline" asChild>
                 <Link href="/login">Client login</Link>
               </Button>
-              <Button asChild>
-                <Link href="/book-a-call">Book a call</Link>
+              <Button asChild className="bg-ink text-ink-foreground hover:bg-ink/90">
+                <Link href="/contact?type=brief">Get a quote</Link>
               </Button>
             </div>
           </nav>

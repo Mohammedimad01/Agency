@@ -12,19 +12,24 @@ import { inquirySchema, BUDGET_RANGES, type InquiryInput } from "@/features/inqu
 import { TIMELINE_OPTIONS } from "@/features/leads/qualification";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { siteConfig } from "@/config/site";
 
 export function InquiryForm({
   kind,
   services,
   defaultService,
   className,
+  delivery = "server",
 }: {
   kind: "message" | "brief" | "booking";
   services: { slug: string; name: string }[];
   defaultService?: string;
   className?: string;
+  /** "email" opens the visitor's email app (used until the backend is connected). */
+  delivery?: "server" | "email";
 }) {
   const [done, setDone] = useState(false);
+  const [emailed, setEmailed] = useState(false);
   const startedAt = useRef(0);
   useEffect(() => {
     startedAt.current = Date.now();
@@ -55,7 +60,31 @@ export function InquiryForm({
   const e = formState.errors;
   const consent = watch("consent");
 
+  function composeEmail(v: InquiryInput) {
+    const service = services.find((s) => s.slug === v.serviceSlug)?.name;
+    const budget = BUDGET_RANGES.find((b) => b.value === v.budget)?.label;
+    const subject = `${kind === "booking" ? "Discovery call request" : kind === "brief" ? "Project brief" : "Enquiry"} — ${v.fullName}${v.company ? ` (${v.company})` : ""}`;
+    const lines = [
+      `Name: ${v.fullName}`,
+      `Email: ${v.email}`,
+      v.phone ? `Phone: ${v.phone}` : "",
+      v.company ? `Company: ${v.company}` : "",
+      v.website ? `Website: ${v.website}` : "",
+      v.country ? `Country: ${v.country}` : "",
+      service ? `Service: ${service}` : "",
+      budget ? `Budget: ${budget}` : "",
+      v.timeline ? `Timeline: ${v.timeline}` : "",
+      v.preferredDate ? `Preferred time: ${v.preferredDate} ${v.preferredTime ?? ""}` : "",
+    ]
+      .filter(Boolean)
+      .concat(["", v.message]);
+    window.location.href = `mailto:${siteConfig.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+    setEmailed(true);
+    setDone(true);
+  }
+
   async function onSubmit(values: InquiryInput) {
+    if (delivery === "email") return composeEmail(values);
     const result = await submitInquiry({
       ...values,
       elapsedMs: Date.now() - startedAt.current,
@@ -74,9 +103,19 @@ export function InquiryForm({
     return (
       <div className={cn("rounded-xl border bg-card p-8 text-center", className)} role="status">
         <CircleCheck className="mx-auto size-8 text-primary" />
-        <p className="mt-4 text-lg font-medium">{kind === "booking" ? "Call requested." : "Message received."}</p>
+        <p className="mt-4 text-lg font-medium">{emailed ? "Almost there." : kind === "booking" ? "Call requested." : "Message received."}</p>
         <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-          Thank you — we&apos;ll get back to you within one business day. A confirmation is on its way to your inbox.
+          {emailed ? (
+            <>
+              Your email app should have opened with your message ready to send. If it didn&apos;t, email us at{" "}
+              <a href={`mailto:${siteConfig.contact.email}`} className="font-medium text-primary hover:underline">
+                {siteConfig.contact.email}
+              </a>
+              .
+            </>
+          ) : (
+            "Thank you — we'll get back to you within one business day. A confirmation is on its way to your inbox."
+          )}
         </p>
       </div>
     );
@@ -178,7 +217,7 @@ export function InquiryForm({
         </label>
       </div>
       <div>
-        <SubmitButton pending={formState.isSubmitting} size="lg">
+        <SubmitButton pending={formState.isSubmitting} size="lg" className="rounded-full px-6">
           {kind === "booking" ? "Request a call" : kind === "brief" ? "Send project brief" : "Send message"}
         </SubmitButton>
       </div>

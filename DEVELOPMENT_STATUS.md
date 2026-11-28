@@ -1,8 +1,9 @@
 # Development status
 
-_Last updated: 2026-11-26_
+_Last updated: 2026-11-28_
 
 ## Changelog
+- **2026-11-28** — Public website redesign: new visual identity (deep ink + lime signal colour, Bricolage Grotesque display type with Instrument Serif italic accents), dark hero with code-built product examples (no stock photos), capability marquee, goal-to-service guide, process, tech stack, FAQ, new header mega-menu and dark footer. New pages for pricing, work, contact and booking. **Frontend-only mode**: the public site now runs without Supabase — services/FAQs fall back to `src/config/content.ts`, forms open a pre-filled email to the agency address, `/login` shows a "not available yet" notice, `/portal` and `/admin` redirect to `/login`, `/setup` returns 404. Tests, lint and production build re-verified (with and without backend env).
 - **2026-11-26** — Rebranded to **Erlyst** (tagline "Websites, software & SEO — built to grow.", header subline "Web · Apps · SEO", contact/owner email erlyst.tech@gmail.com). New service catalogue (21 services in four groups) with a header mega-menu, grouped services on the homepage and `/services`, related services on each service page, grouped footer, rewritten homepage copy and SEO keywords. Demo team accounts moved to `@erlyst.dev`. All tests, lint and build re-verified.
 
 ## Summary

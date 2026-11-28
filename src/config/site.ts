@@ -23,20 +23,24 @@ export const siteConfig = {
   },
   /** Brand colours (any CSS colour). Applied as CSS variables in the root layout. */
   colors: {
-    brand: env("NEXT_PUBLIC_BRAND_COLOR", "oklch(0.46 0.085 165)"),
+    brand: env("NEXT_PUBLIC_BRAND_COLOR", "oklch(0.52 0.12 163)"),
     brandForeground: env("NEXT_PUBLIC_BRAND_FOREGROUND", "oklch(0.985 0 0)"),
   },
+  /** Leave a value empty to hide it everywhere on the site. */
   contact: {
     email: env("NEXT_PUBLIC_CONTACT_EMAIL", "erlyst.tech@gmail.com"),
-    phone: env("NEXT_PUBLIC_CONTACT_PHONE", "+971 50 000 0000"),
-    address: env("NEXT_PUBLIC_CONTACT_ADDRESS", "Dubai, United Arab Emirates"),
-    hours: env("NEXT_PUBLIC_CONTACT_HOURS", "Sun–Thu, 9:00–18:00 GST"),
+    phone: env("NEXT_PUBLIC_CONTACT_PHONE", ""),
+    /** Digits only with country code, e.g. 971501234567 — adds WhatsApp buttons. */
+    whatsapp: env("NEXT_PUBLIC_WHATSAPP_NUMBER", ""),
+    address: env("NEXT_PUBLIC_CONTACT_ADDRESS", ""),
+    hours: env("NEXT_PUBLIC_CONTACT_HOURS", "Replies within one business day"),
   },
+  /** Full profile URLs; empty values are hidden. */
   social: {
-    linkedin: env("NEXT_PUBLIC_SOCIAL_LINKEDIN", "https://www.linkedin.com"),
-    instagram: env("NEXT_PUBLIC_SOCIAL_INSTAGRAM", "https://www.instagram.com"),
-    x: env("NEXT_PUBLIC_SOCIAL_X", "https://x.com"),
-    github: env("NEXT_PUBLIC_SOCIAL_GITHUB", "https://github.com"),
+    linkedin: env("NEXT_PUBLIC_SOCIAL_LINKEDIN", ""),
+    instagram: env("NEXT_PUBLIC_SOCIAL_INSTAGRAM", ""),
+    x: env("NEXT_PUBLIC_SOCIAL_X", ""),
+    github: env("NEXT_PUBLIC_SOCIAL_GITHUB", ""),
   },
   /** Display defaults; per-organization values in the `settings` table take precedence for documents. */
   locale: env("NEXT_PUBLIC_LOCALE", "en-US"),

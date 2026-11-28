@@ -5,73 +5,56 @@ import { PageHero, Section, SectionIntro } from "@/components/public/section";
 import { ContactCta, FaqList } from "@/components/public/home-sections";
 import { Button } from "@/components/ui/button";
 import { getFaqs, getPublicServices } from "@/features/website/queries";
+import { ENGAGEMENTS } from "@/config/content";
 import { formatMoney } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 export const revalidate = 300;
-export const metadata: Metadata = { title: "Pricing", description: "Transparent starting prices and engagement models." };
-
-const MODELS = [
-  {
-    name: "Fixed-scope project",
-    body: "Best for well-defined work: a website, a dashboard suite, a brand identity.",
-    points: ["Written scope & milestones", "Fixed price, milestone billing", "Approval at each stage", "30-day post-launch support"],
-    cta: "Start a project",
-    href: "/contact?type=brief",
-    featured: true,
-  },
-  {
-    name: "Product partnership",
-    body: "A dedicated slice of our team for ongoing product development.",
-    points: ["Monthly capacity block", "Fortnightly planning", "Roadmap & analytics", "Priority support"],
-    cta: "Talk to us",
-    href: "/book-a-call",
-  },
-  {
-    name: "Care & support",
-    body: "Keep what we built fast, secure and up to date.",
-    points: ["Monitoring & updates", "Monthly improvements", "Response-time commitment", "Quarterly review"],
-    cta: "Ask about support",
-    href: "/contact",
-  },
-];
+export const metadata: Metadata = { title: "Pricing", description: "Fixed written quotes for websites, custom software and SEO. See how we price projects and monthly services." };
 
 export default async function PricingPage() {
   const [services, faqs] = await Promise.all([getPublicServices(), getFaqs()]);
   const priced = services.filter((s) => s.starting_price_cents);
   return (
     <>
-      <PageHero label="Pricing" title="Clear pricing. No surprises.">
-        Every project is scoped individually, but here&apos;s where engagements typically start. Your proposal will include a fixed price, payment schedule and timeline.
+      <PageHero label="Pricing" title="Clear scope. Fixed quotes. No surprises.">
+        Every project is quoted in writing after a short scoping call: one price, clear milestones, and nothing added later without your approval.
       </PageHero>
       <Section>
-        <div className="grid gap-4 lg:grid-cols-3">
-          {MODELS.map((m) => (
-            <div key={m.name} className={`flex flex-col rounded-xl border p-7 ${m.featured ? "border-primary/40 bg-primary/[0.03]" : ""}`}>
-              <h2 className="text-[18px] font-medium">{m.name}</h2>
-              <p className="mt-2 text-[14.5px] text-muted-foreground">{m.body}</p>
-              <ul className="mt-6 flex-1 space-y-2.5 text-[14.5px]">
+        <div className="grid gap-5 lg:grid-cols-3">
+          {ENGAGEMENTS.map((m) => (
+            <div key={m.name} className={cn("relative flex flex-col rounded-[24px] border p-7", m.featured ? "dark border-transparent bg-ink text-ink-foreground" : "bg-background")}>
+              {m.featured ? <span className="absolute -top-3 left-7 rounded-full bg-signal px-3 py-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink">Most requested</span> : null}
+              <h2 className="font-display text-[26px] leading-tight">{m.name}</h2>
+              <p className={cn("mt-2 text-[15px]", m.featured ? "text-ink-foreground/70" : "text-muted-foreground")}>{m.summary}</p>
+              <p className="mt-6 flex items-baseline gap-2">
+                <span className="font-display text-[30px]">{m.price ?? "Fixed quote"}</span>
+                <span className={cn("text-[13px]", m.featured ? "text-ink-foreground/60" : "text-muted-foreground")}>{m.price ? m.unit : `· ${m.unit}`}</span>
+              </p>
+              <ul className="mt-6 flex-1 space-y-3 text-[15px]">
                 {m.points.map((p) => (
-                  <li key={p} className="flex items-center gap-2.5">
-                    <Check className="size-4 text-primary" />
+                  <li key={p} className="flex items-start gap-2.5">
+                    <Check className={cn("mt-0.5 size-4 shrink-0", m.featured ? "text-signal" : "text-primary")} />
                     {p}
                   </li>
                 ))}
               </ul>
-              <Button className="mt-8" variant={m.featured ? "default" : "outline"} asChild>
+              <Button className={cn("mt-8 rounded-full", m.featured && "bg-signal font-semibold text-ink hover:bg-signal/90")} variant={m.featured ? "default" : "outline"} asChild>
                 <Link href={m.href}>{m.cta}</Link>
               </Button>
             </div>
           ))}
         </div>
+        <p className="mt-6 text-[13.5px] text-muted-foreground">Monthly services (SEO, maintenance, hosting) are billed monthly with no long lock-in. Prices exclude third-party costs such as domains, licences and ad spend.</p>
       </Section>
       {priced.length ? (
         <Section tone="muted">
           <SectionIntro label="Starting prices" title="Typical starting points by service.">
-            Prices exclude applicable taxes. Final pricing depends on scope, integrations and timeline.
+            Final pricing depends on scope, integrations and timeline.
           </SectionIntro>
-          <div className="divide-y rounded-lg border bg-background">
+          <div className="divide-y overflow-hidden rounded-[22px] border bg-background">
             {priced.map((s) => (
-              <Link key={s.id} href={`/services/${s.slug}`} className="flex flex-col gap-1 px-5 py-4 hover:bg-accent/50 sm:flex-row sm:items-center sm:justify-between">
+              <Link key={s.id} href={`/services/${s.slug}`} className="flex flex-col gap-1 px-6 py-4 hover:bg-accent/50 sm:flex-row sm:items-center sm:justify-between">
                 <span className="font-medium">{s.name}</span>
                 <span className="text-sm text-muted-foreground">
                   {s.delivery_time ? `${s.delivery_time} · ` : ""}
@@ -84,8 +67,10 @@ export default async function PricingPage() {
       ) : null}
       {faqs.length ? (
         <Section>
-          <h2 className="mb-8 font-display text-[clamp(1.8rem,3vw,2.4rem)] tracking-tight">Pricing questions</h2>
-          <FaqList faqs={faqs} />
+          <div className="grid gap-10 md:grid-cols-[1fr_1.7fr]">
+            <h2 className="font-display text-[clamp(2rem,3.6vw,2.8rem)] leading-[1.05]">Pricing questions</h2>
+            <FaqList faqs={faqs} />
+          </div>
         </Section>
       ) : null}
       <ContactCta />
