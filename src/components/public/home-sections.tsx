@@ -11,7 +11,7 @@ import { GOAL_GUIDE } from "@/config/content";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-export function whatsappHref(text = "Hi Erlyst, I'd like to talk about a project.") {
+export function whatsappHref(text = "Hi GridLab, I'd like to talk about a project.") {
   return siteConfig.contact.whatsapp ? `https://wa.me/${siteConfig.contact.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(text)}` : null;
 }
 

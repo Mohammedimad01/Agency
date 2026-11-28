@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /*
  * Product vignettes drawn in code (no stock photos). They illustrate the kinds
- * of things Erlyst builds and are labelled as examples wherever shown.
+ * of things GridLab builds and are labelled as examples wherever shown.
  */
 
 export function BrowserMockup({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" }) {

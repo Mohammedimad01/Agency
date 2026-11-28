@@ -1,15 +1,17 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
 
-/** Local Supabase defaults (`supabase start`). Override with env vars to target another stack. */
-export const URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "http://127.0.0.1:54321";
-export const ANON =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
-export const SERVICE =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ??
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-export const PASSWORD = "Password123!";
+/**
+ * Integration tests run against a LOCAL Supabase stack loaded with the test fixture
+ * (`npm run db:test-data`). Credentials come from the environment — nothing is hard-coded:
+ *   eval "$(npx supabase status -o env | sed 's/^/export /')" (gives API_URL, ANON_KEY, SERVICE_ROLE_KEY)
+ *   export TEST_USER_PASSWORD=...  (same value used when loading the fixture)
+ * Without them the integration suites are skipped.
+ */
+export const URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.API_URL ?? "";
+export const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.ANON_KEY ?? "";
+export const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SERVICE_ROLE_KEY ?? "";
+export const PASSWORD = process.env.TEST_USER_PASSWORD ?? "";
 
 export type DB = SupabaseClient<Database>;
 const opts = { auth: { persistSession: false, autoRefreshToken: false } };
@@ -25,6 +27,7 @@ export async function signIn(email: string, password = PASSWORD): Promise<DB> {
 }
 
 export async function stackAvailable() {
+  if (!URL || !ANON || !SERVICE || !PASSWORD) return false;
   try {
     const r = await fetch(`${URL}/rest/v1/`, { headers: { apikey: ANON } });
     return r.ok || r.status === 404;

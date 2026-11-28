@@ -3,7 +3,7 @@
 ## 0. Frontend-only launch (no backend yet)
 The public website can go live before Supabase is set up:
 1. Import the repository into Vercel (framework: Next.js, Node 20+).
-2. Set `NEXT_PUBLIC_APP_URL` to the live URL (e.g. `https://erlyst.com`). Optionally set `NEXT_PUBLIC_WHATSAPP_NUMBER` (digits with country code, e.g. `9715XXXXXXXX`) to show WhatsApp buttons.
+2. Set `NEXT_PUBLIC_APP_URL` to the live URL (e.g. `https://gridlab.com`). Optionally set `NEXT_PUBLIC_WHATSAPP_NUMBER` (digits with country code, e.g. `9715XXXXXXXX`) to show WhatsApp buttons.
 3. Leave the Supabase variables unset. Deploy.
 
 In this mode the quote, contact and booking forms open the visitor's email app with a pre-filled message to `siteConfig.contact.email`; services and FAQs come from `src/config/content.ts`; `/login` explains that sign-in is not available yet. Add the Supabase variables later (steps 1–4 below) and redeploy — the site switches to the database, CRM and portal automatically.
@@ -17,7 +17,7 @@ In this mode the quote, contact and booking forms open the visitor's email app w
    ```bash
    npx supabase db push
    ```
-   Do **not** run `seed.sql` in production.
+   The production database starts empty; create the owner at `/setup`. Never load `tests/fixtures/test-data.sql` into production (the loader refuses non-local databases).
 3. **Extensions**: Dashboard → Database → Extensions → enable `pg_cron` and `pg_net`. If they weren't enabled when migrations ran, re-run the scheduling block from `supabase/migrations/20261123000700_automation.sql` (the `cron.schedule` calls) in the SQL editor.
 4. **Tell pg_cron where the app is** (SQL editor, service role):
    ```sql

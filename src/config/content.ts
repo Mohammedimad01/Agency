@@ -400,7 +400,7 @@ export const STATIC_SERVICES: StaticService[] = [
 ];
 
 export const STATIC_FAQS: { question: string; answer: string }[] = [
-  { question: "What does Erlyst do?", answer: "We design and build business websites, online stores, custom web and mobile apps, and business software such as invoicing, quotation and ERP systems — then help you get found with SEO, local SEO, AI search optimisation and digital marketing." },
+  { question: "What does GridLab do?", answer: "We design and build business websites, online stores, custom web and mobile apps, and business software such as invoicing, quotation and ERP systems — then help you get found with SEO, local SEO, AI search optimisation and digital marketing." },
   { question: "How do projects start?", answer: "With a free 30-minute call. We learn your goals, budget and timeline, then send a fixed written quote with scope and milestones before any work begins." },
   { question: "How long does a website take?", answer: "Most business websites go live in 3–6 weeks. Online stores and custom software take longer; your quote includes a milestone-by-milestone timeline." },
   { question: "Will my website rank on Google?", answer: "Every site we build is SEO-ready: fast, mobile-first, structured data, sitemap and Google Search Console set up at launch. Ongoing SEO is available if you want to grow traffic further." },

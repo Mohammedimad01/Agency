@@ -6,12 +6,12 @@
 const env = (key: string, fallback: string) => process.env[key] || fallback;
 
 export const siteConfig = {
-  name: env("NEXT_PUBLIC_AGENCY_NAME", "Erlyst"),
-  shortName: env("NEXT_PUBLIC_AGENCY_SHORT_NAME", "Erlyst"),
+  name: env("NEXT_PUBLIC_AGENCY_NAME", "GridLab"),
+  shortName: env("NEXT_PUBLIC_AGENCY_SHORT_NAME", "GridLab"),
   tagline: env("NEXT_PUBLIC_AGENCY_TAGLINE", "Websites, software & SEO — built to grow."),
   description: env(
     "NEXT_PUBLIC_AGENCY_DESCRIPTION",
-    "Erlyst is a digital studio that designs and builds fast websites, custom apps and business software, and grows them with SEO, AI search optimisation and digital marketing.",
+    "GridLab is a digital studio that designs and builds fast websites, custom apps and business software, and grows them with SEO, AI search optimisation and digital marketing.",
   ),
   url: env("NEXT_PUBLIC_APP_URL", "http://localhost:3000"),
   /** Logo: a path under /public. When empty, the wordmark is rendered from `name`. */
@@ -28,7 +28,7 @@ export const siteConfig = {
   },
   /** Leave a value empty to hide it everywhere on the site. */
   contact: {
-    email: env("NEXT_PUBLIC_CONTACT_EMAIL", "erlyst.tech@gmail.com"),
+    email: env("NEXT_PUBLIC_CONTACT_EMAIL", "gridlab.tech@gmail.com"),
     phone: env("NEXT_PUBLIC_CONTACT_PHONE", ""),
     /** Digits only with country code, e.g. 971501234567 — adds WhatsApp buttons. */
     whatsapp: env("NEXT_PUBLIC_WHATSAPP_NUMBER", ""),

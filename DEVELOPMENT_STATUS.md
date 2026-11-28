@@ -3,8 +3,9 @@
 _Last updated: 2026-11-28_
 
 ## Changelog
+- **2026-11-28** — Renamed to **GridLab** (contact email gridlab.tech@gmail.com, new grid logo mark). Removed all demo data and demo passwords: no seed runs on `db reset`, the database starts empty and the owner is created at `/setup`. Test data moved to `tests/fixtures/test-data.sql`, loaded only into a local DB with a password supplied via `TEST_USER_PASSWORD`; test credentials come from the environment.
 - **2026-11-28** — Public website redesign: new visual identity (deep ink + lime signal colour, Bricolage Grotesque display type with Instrument Serif italic accents), dark hero with code-built product examples (no stock photos), capability marquee, goal-to-service guide, process, tech stack, FAQ, new header mega-menu and dark footer. New pages for pricing, work, contact and booking. **Frontend-only mode**: the public site now runs without Supabase — services/FAQs fall back to `src/config/content.ts`, forms open a pre-filled email to the agency address, `/login` shows a "not available yet" notice, `/portal` and `/admin` redirect to `/login`, `/setup` returns 404. Tests, lint and production build re-verified (with and without backend env).
-- **2026-11-26** — Rebranded to **Erlyst** (tagline "Websites, software & SEO — built to grow.", header subline "Web · Apps · SEO", contact/owner email erlyst.tech@gmail.com). New service catalogue (21 services in four groups) with a header mega-menu, grouped services on the homepage and `/services`, related services on each service page, grouped footer, rewritten homepage copy and SEO keywords. Demo team accounts moved to `@erlyst.dev`. All tests, lint and build re-verified.
+- **2026-11-26** — Rebranded to **GridLab** (tagline "Websites, software & SEO — built to grow.", header subline "Web · Apps · SEO", contact/owner email gridlab.tech@gmail.com). New service catalogue (21 services in four groups) with a header mega-menu, grouped services on the homepage and `/services`, related services on each service page, grouped footer, rewritten homepage copy and SEO keywords. Demo team accounts moved to `@gridlab.dev`. All tests, lint and build re-verified.
 
 ## Summary
 All eight phases of the brief are implemented and verified end to end on a local Supabase stack. The platform is usable today: the public site captures leads, the admin runs sales/delivery/finance, clients work in their portal, and the automation engine connects them.
@@ -45,11 +46,11 @@ All eight phases of the brief are implemented and verified end to end on a local
 
 ## Next steps (suggested)
 1. Deploy to Supabase + Vercel following docs/DEPLOYMENT.md; configure Resend and `private.app_config`.
-2. Replace demo content: brand assets in `src/config/site.ts`, services, case studies, testimonials.
+2. Add real content: case studies and testimonials (admin → Website), contact details in `src/config/site.ts`.
 3. Add a payment provider (Stripe Checkout + webhook writing to `payments` with `provider_payment_id`).
 4. Calendar integration for bookings (Cal.com webhook → `meeting_records`).
 5. Avatar uploads, soft-delete restore UI, per-project task board, saved table views.
 6. CI: GitHub Actions running typecheck, lint, unit tests, and integration/E2E against `supabase start`.
 
 ## How to resume
-`npx supabase start` → `npm run db:reset` → `npm run dev`. Run `npm test`, `npm run test:integration`, `npm run test:e2e`. Architecture and conventions are documented in `docs/`.
+`npx supabase start` → `npm run db:reset` → `npm run dev` → `/setup`. For tests see docs/TESTING.md. Run `npm test`, `npm run test:integration`, `npm run test:e2e`. Architecture and conventions are documented in `docs/`.

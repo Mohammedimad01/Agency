@@ -1,4 +1,4 @@
-# Erlyst — Agency Operating System
+# GridLab — Agency Operating System
 
 A complete operating system for a digital agency, in one Next.js + Supabase codebase:
 
@@ -50,21 +50,9 @@ npm run db:reset
 npm run dev
 ```
 
-Open http://localhost:3000. Demo accounts (password `Password123!`):
-
-| Account | Role |
-|---|---|
-| erlyst.tech@gmail.com | Owner (everything) — local demo password only; in production create the owner at `/setup` with your own password |
-| pm@erlyst.dev | Project Manager |
-| dev@erlyst.dev | Developer (assigned projects only, no finance) |
-| design@erlyst.dev | Designer |
-| finance@erlyst.dev | Finance Manager |
-| client@acme.test | Client portal (Acme Logistics) |
-| client@globex.test | Client portal (Globex Retail) |
+Open http://localhost:3000 and go to **`/setup`** to create your agency and owner account with your own password (the database starts empty — there are no demo accounts).
 
 Emails are printed to the dev-server console (`EMAIL_PROVIDER=console`); local Supabase also runs Mailpit at http://127.0.0.1:54324.
-
-To start with an **empty** workspace instead of demo data, run `npx supabase db reset --no-seed` and open `/setup`.
 
 ## Scripts
 
@@ -105,6 +93,5 @@ src/
   config/            site.ts (brand) · navigation
 supabase/
   migrations/        schema, RLS, automation, portal views, storage, reporting
-  seed.sql           demo data (local only)
-tests/               unit · integration · e2e
+tests/               unit · integration · e2e · fixtures/ (test-only data)
 ```

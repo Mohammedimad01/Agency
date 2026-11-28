@@ -18,7 +18,7 @@ export function Section({ id, className, children, tone = "default" }: { id?: st
   );
 }
 
-/** Erlyst section label: mono index + label, e.g. "01 — What we build". */
+/** GridLab section label: mono index + label, e.g. "01 — What we build". */
 export function Eyebrow({ index, children, className }: { index?: string; children: React.ReactNode; className?: string }) {
   return (
     <p className={cn("mb-5 flex h-fit items-center gap-2.5 self-start font-mono text-[11.5px] uppercase tracking-[0.16em] text-muted-foreground", className)}>

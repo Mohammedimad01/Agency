@@ -1,7 +1,7 @@
 -- =============================================================================
--- DEVELOPMENT SEED DATA (local only — `supabase db reset` runs this file)
--- Every demo account uses the password:  Password123!
--- Portfolio items and testimonials below are clearly-labelled DEMO content.
+-- AUTOMATED-TEST FIXTURE — load into a LOCAL test database only, never production.
+-- Loaded by `npm run db:test-data` (scripts/load-test-data.sh). The account
+-- password is supplied at load time via TEST_USER_PASSWORD; none is stored here.
 -- =============================================================================
 create or replace function pg_temp.seed_user(p_email text, p_name text) returns uuid language plpgsql as $$
 declare v_id uuid := gen_random_uuid();
@@ -10,7 +10,7 @@ begin
     raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token,
     email_change_token_new, email_change, email_change_token_current, phone_change, phone_change_token, reauthentication_token)
   values ('00000000-0000-0000-0000-000000000000', v_id, 'authenticated', 'authenticated', p_email,
-    extensions.crypt('Password123!', extensions.gen_salt('bf')), now(),
+    extensions.crypt(current_setting('fixture.password'), extensions.gen_salt('bf')), now(),
     '{"provider":"email","providers":["email"]}', jsonb_build_object('full_name', p_name), now(), now(), '', '', '', '', '', '', '', '');
   insert into auth.identities (id, user_id, provider_id, provider, identity_data, last_sign_in_at, created_at, updated_at)
   values (gen_random_uuid(), v_id, v_id::text, 'email',
@@ -26,18 +26,18 @@ declare
   pr_acme uuid; pr_globex uuid; inv1 uuid; inv2 uuid; inv3 uuid; d1 uuid; f1 uuid;
   s_web uuid; s_bi uuid; s_brand uuid; s_ai uuid; conv uuid;
 begin
-  u_owner  := pg_temp.seed_user('erlyst.tech@gmail.com',   'Amina Rahman');
-  u_pm     := pg_temp.seed_user('pm@erlyst.dev',      'Yusuf Khan');
-  u_dev    := pg_temp.seed_user('dev@erlyst.dev',     'Omar Farooq');
-  u_design := pg_temp.seed_user('design@erlyst.dev',  'Layla Hassan');
-  u_fin    := pg_temp.seed_user('finance@erlyst.dev', 'Sara Malik');
+  u_owner  := pg_temp.seed_user('owner@team.test',   'Amina Rahman');
+  u_pm     := pg_temp.seed_user('pm@team.test',      'Yusuf Khan');
+  u_dev    := pg_temp.seed_user('dev@team.test',     'Omar Farooq');
+  u_design := pg_temp.seed_user('design@team.test',  'Layla Hassan');
+  u_fin    := pg_temp.seed_user('finance@team.test', 'Sara Malik');
   u_acme   := pg_temp.seed_user('client@acme.test',      'John Carter');
   u_globex := pg_temp.seed_user('client@globex.test',    'Priya Nair');
 
-  v_org := public.bootstrap_organization(u_owner, 'Erlyst', 'erlyst', 'USD', 'Asia/Dubai');
-  update public.settings set default_tax_rate_bps = 500, company_email = 'erlyst.tech@gmail.com',
+  v_org := public.bootstrap_organization(u_owner, 'Test Agency', 'test-agency', 'USD', 'Asia/Dubai');
+  update public.settings set default_tax_rate_bps = 500, company_email = 'owner@team.test',
     company_phone = '+971 50 000 0000', company_address = 'Dubai, United Arab Emirates',
-    payment_instructions = E'Bank: Example Bank\nAccount name: Erlyst\nIBAN: AE00 0000 0000 0000 0000 000\nReference: your invoice number'
+    payment_instructions = E'Bank: Example Bank\nAccount name: Test Agency\nIBAN: AE00 0000 0000 0000 0000 000\nReference: your invoice number'
   where organization_id = v_org;
 
   insert into public.team_members (organization_id, profile_id, role_key, status, joined_at, title, invited_by) values
@@ -178,7 +178,7 @@ begin
   insert into public.invoice_items (invoice_id, description, quantity, unit_price_cents) values (inv2, '40% at design approval — Acme corporate website', 1, 371200);
   update public.invoices set status = 'sent' where id = inv2;
   insert into public.payments (organization_id, invoice_id, client_id, amount_cents, payment_date, method, reference, recorded_by)
-  values (v_org, inv2, c_acme, 150000, current_date - 2, 'card', 'ch_demo_1', u_fin);
+  values (v_org, inv2, c_acme, 150000, current_date - 2, 'card', 'ch_test_1', u_fin);
 
   insert into public.invoices (organization_id, client_id, project_id, issue_date, due_date, status, created_by)
   values (v_org, c_acme, p_old, current_date - 100, current_date - 86, 'draft', u_fin) returning id into inv3;
@@ -205,32 +205,6 @@ begin
   insert into public.messages (organization_id, conversation_id, author_id, body, created_at) values
     (v_org, conv, u_pm, 'Hi John — the homepage designs are ready for your review in the Deliverables tab.', now() - interval '1 day'),
     (v_org, conv, u_acme, 'Thanks Yusuf, I will review them with the team tomorrow.', now() - interval '20 hours');
-
-  -- Website content (DEMO) ------------------------------------------------------
-  insert into public.portfolio_items (organization_id, slug, title, client_name, industry, year, summary, challenge, solution, results,
-                                      metrics, services, tech_stack, is_published, is_featured, sort_order) values
-    (v_org, 'logistics-tracking-platform', 'Real-time logistics tracking', 'Demo: Freight company', 'Logistics', 2025,
-     'A customer-facing tracking portal that cut support tickets by a third.',
-     'Customers called support for every shipment update.', 'A self-service portal with live tracking and proactive alerts.',
-     'Support volume dropped and NPS rose within one quarter.',
-     '[{"label":"Fewer support tickets","value":"-34%"},{"label":"NPS","value":"+21"}]',
-     array['Custom web apps','UI/UX design'], array['Next.js','PostgreSQL','Mapbox'], true, true, 1),
-    (v_org, 'retail-bi-suite', 'Retail performance intelligence', 'Demo: Retail group', 'Retail', 2025,
-     'Executive dashboards unifying POS, inventory and staffing data.',
-     'Leadership waited two weeks for monthly reports.', 'A governed Power BI model with daily refresh and store-level drilldowns.',
-     'Reporting time went from weeks to minutes.',
-     '[{"label":"Reporting time","value":"-95%"},{"label":"Stores covered","value":"40"}]',
-     array['Power BI & analytics'], array['Power BI','Azure SQL','dbt'], true, true, 2),
-    (v_org, 'clinic-ai-intake', 'AI patient intake assistant', 'Demo: Clinic network', 'Healthcare', 2026,
-     'Document intelligence that summarises intake forms for clinicians.',
-     'Clinicians spent 10 minutes per patient reading forms.', 'An LLM-powered summariser with human review and audit trails.',
-     'Saved over 300 clinician hours per month.',
-     '[{"label":"Hours saved / month","value":"300+"},{"label":"Accuracy (reviewed)","value":"98%"}]',
-     array['AI automation'], array['Python','PostgreSQL','LLM APIs'], true, true, 3);
-
-  insert into public.testimonials (organization_id, author_name, author_title, company, quote, rating, is_published, sort_order) values
-    (v_org, 'Demo Client', 'Operations Director', 'Demo Logistics Co.', 'They understood our operations faster than any agency we have worked with, and the portal kept everyone aligned.', 5, true, 1),
-    (v_org, 'Demo Client', 'CFO', 'Demo Retail Group', 'Our board pack used to take two weeks. Now it is live, accurate and actually used.', 5, true, 2);
 
   -- keep the local outbox quiet: seed-time emails are not useful
   delete from public.email_outbox;

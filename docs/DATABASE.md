@@ -17,7 +17,7 @@ PostgreSQL on Supabase. Migrations in `supabase/migrations` (apply with `supabas
 | `1000_storage` | buckets, size/MIME limits, storage policies |
 | `1100_reporting` | security-invoker reporting functions |
 | `1200_document_items` | atomic `replace_document_items`, `convert_lead` |
-| `20261126000100_service_catalogue_v2` | Erlyst service catalogue (Websites · Custom apps & software · SEO & growth · More services) installed for every organization via `private.install_default_services`; `bootstrap_organization` uses it; overlapping v1 services hidden, not deleted |
+| `20261126000100_service_catalogue_v2` | GridLab service catalogue (Websites · Custom apps & software · SEO & growth · More services) installed for every organization via `private.install_default_services`; `bootstrap_organization` uses it; overlapping v1 services hidden, not deleted |
 
 ## Conventions
 - UUID primary keys, `created_at`/`updated_at` (trigger-maintained), `deleted_at` for soft deletion on business records.
@@ -47,4 +47,4 @@ PostgreSQL on Supabase. Migrations in `supabase/migrations` (apply with `supabas
 | `run_scheduled_automations`, `claim_email_batch`, `complete_email`, `check_rate_limit`, `bootstrap_organization` | service role only | jobs, outbox, rate limiting, first-run setup |
 
 ## Seed data
-`supabase/seed.sql` (local only): demo organisation “Erlyst”, 7 users (all roles + two clients), 9 services, 3 templates, 7 leads across the pipeline, 3 clients, 2 proposals, 3 projects (one generated from a template, partly complete), a deliverable awaiting approval, 4 invoices with partial/full payments, expenses, a conversation, and clearly-labelled demo portfolio/testimonials.
+There is no demo seed: `supabase db reset` produces an empty database and the owner is created at `/setup`. Automated tests use `tests/fixtures/test-data.sql` (7 test accounts on `@team.test`/`.test` domains, leads, clients, projects, invoices…), loaded into a **local** database with `TEST_USER_PASSWORD=… npm run db:test-data`; the password is supplied at load time and never stored in the repository.

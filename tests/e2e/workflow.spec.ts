@@ -20,7 +20,7 @@ test.describe("public website → CRM", () => {
     await page.getByRole("button", { name: "Send project brief" }).click();
     await expect(page.getByText("Message received.")).toBeVisible();
 
-    await login(page, "erlyst.tech@gmail.com");
+    await login(page, "owner@team.test");
     await page.goto("/admin/leads?view=table");
     await page.getByPlaceholder("Search leads…").fill(name);
     await page.getByText(name).click();
@@ -44,7 +44,7 @@ test.describe("authorization", () => {
   });
 
   test("a developer cannot open finance pages", async ({ page }) => {
-    await login(page, "dev@erlyst.dev");
+    await login(page, "dev@team.test");
     await page.goto("/admin/finance/invoices");
     await expect(page).toHaveURL(/access-denied/);
     await expect(page.getByRole("navigation", { name: "Admin" }).getByText("Invoices")).toHaveCount(0);
@@ -83,7 +83,7 @@ test.describe("client portal", () => {
 
 test.describe("operations", () => {
   test("finance creates an invoice with live totals, issues it and records a payment", async ({ page }) => {
-    await login(page, "finance@erlyst.dev");
+    await login(page, "finance@team.test");
     await page.goto("/admin/finance/invoices/new");
     await page.getByLabel("Client").selectOption({ label: "Nadia Studio" });
     await page.getByLabel("Description").first().fill("Brand photography retouching");
@@ -105,7 +105,7 @@ test.describe("operations", () => {
   });
 
   test("a project manager creates a project from a template", async ({ page }) => {
-    await login(page, "pm@erlyst.dev");
+    await login(page, "pm@team.test");
     await page.goto("/admin/projects/new");
     await page.getByLabel("Project name").fill(`E2E Website ${Date.now()}`);
     await page.getByLabel("Client").selectOption({ label: "Nadia Studio" });

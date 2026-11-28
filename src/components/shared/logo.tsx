@@ -3,14 +3,15 @@ import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-/** Erlyst mark: three stacked bars forming an "E", the top bar in the signal colour. */
+/** GridLab mark: a 2×2 grid, one cell in the signal colour. */
 export function LogoMark({ className, inverted }: { className?: string; inverted?: boolean }) {
   return (
     <span aria-hidden className={cn("flex size-8 items-center justify-center rounded-[9px] bg-ink", inverted && "bg-white/10 ring-1 ring-white/15", className)}>
       <svg viewBox="0 0 20 20" className="size-[18px]">
-        <rect x="4" y="3.5" width="12" height="3" rx="1.5" fill="var(--signal)" />
-        <rect x="4" y="8.5" width="8.5" height="3" rx="1.5" fill="var(--ink-foreground)" />
-        <rect x="4" y="13.5" width="12" height="3" rx="1.5" fill="var(--ink-foreground)" />
+        <rect x="3" y="3" width="6" height="6" rx="1.6" fill="var(--ink-foreground)" />
+        <rect x="11" y="3" width="6" height="6" rx="1.6" fill="var(--signal)" />
+        <rect x="3" y="11" width="6" height="6" rx="1.6" fill="var(--ink-foreground)" />
+        <rect x="11" y="11" width="6" height="6" rx="1.6" fill="var(--ink-foreground)" opacity="0.45" />
       </svg>
     </span>
   );
